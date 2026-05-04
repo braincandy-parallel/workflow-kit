@@ -10,6 +10,30 @@ What changed, what it means for you, and what to watch for. The `/update-wfk pul
 
 ---
 
+## v3.2.1 - 2026-05-04
+
+### What this release is about
+
+Pickup gains a real PJL scope-check guardrail (the v3.2.0 changelog described it but the implementation wasn't in the SKILL.md). Generalization pass replaces hardcoded vault paths and Flora-specific examples with placeholders so the skill works in any vault. Stale references to deprecated skill names cleaned up.
+
+### What got better
+
+**`/pickup` — PJL scope-check guardrail (real this time).** Before writing any session entry to a project log, pickup now scans the PIC body for project signals and verifies they match the PIC's `project:` frontmatter. If they don't, it asks before writing instead of silently routing work to the wrong PJL. PICs sometimes bundle work across projects or get mis-filed initially; this prevents one bad frontmatter from polluting another project's log forever.
+
+**`/pickup` — runtime path config and generic examples.** Hardcoded `Work Vault/` paths replaced with `{vault_root}/{paths.reports}/...` placeholders that resolve via `~/.claude/wfk-paths.json`. Cluster examples ("Portal for Patrick", "KB v1 Shipped") replaced with generic labels ("Goal A", "Goal B"). Project path examples replaced with `<initiative>/<project>` placeholders. The skill now works correctly in any vault, not just the maintainer's.
+
+**`/pickup` — deprecated skill name references cleaned up.** Three references to `/create-spec`, `/create-plan`, and `/create-pickup` in the prose updated to their current `/create-note SPC|PL|PIC` equivalents.
+
+### What you need to do
+
+Nothing. All changes are backwards-compatible.
+
+### Migration
+
+`/update-wfk pull` updates pickup automatically.
+
+---
+
 ## v3.2.0 - 2026-04-30
 
 ### What this release is about
