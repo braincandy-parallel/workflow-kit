@@ -108,9 +108,9 @@ When multiple PICs exist for the same project area:
 
 ### Step 4: Goal-Aligned Clustering
 
-**Read the current RM** (most recent file in `01_Notes/Roadmaps/`) before clustering. If an RM exists, cluster PICs by RM goal first, then by project within each goal. If no RM exists, fall back to project-only clustering.
+**Read the current MRM** (most recent file in `01_Notes/Reports/MRM/`) and **WRM** (most recent file in `01_Notes/Reports/WRM/`) before clustering. If an MRM exists, cluster PICs by MRM objective first, then by project within each objective. If no MRM exists, fall back to project-only clustering.
 
-**With RM:** Clusters become goal-aligned: "Goal A (3 PICs)", "Goal B (2 PICs)", "Unaligned (1 PIC)". PICs that don't map to any RM goal get an "Unaligned" cluster, presented last. This makes strategic priority visible at a glance.
+**With MRM:** Clusters become objective-aligned: "Objective A (3 PICs)", "Objective B (2 PICs)", "Unaligned (1 PIC)". PICs that don't map to any MRM objective get an "Unaligned" cluster, presented last. If a WRM exists, prioritize PICs that appear in the WRM's "in scope this week" list.
 
 Within each goal cluster, evaluate batch compatibility:
 
@@ -142,7 +142,7 @@ This step prevents showing stale PICs that were already picked up or closed by o
 
 **Presentation rules (mandatory):**
 - Present ONE grouped-by-cluster table -- not three separate views.
-- Clusters are RM goals when available (e.g. "Goal A", "Goal B", "Unaligned"). Without an RM, fall back to project themes. Pull the theme from the SOD priorities when possible.
+- Clusters are MRM objectives when available (e.g. "Objective A", "Objective B", "Unaligned"). Without an MRM, fall back to project themes. Pull the theme from the SOD priorities when possible.
 - A "Validate first" cluster always comes first if there are picked-up PICs flagged in the SOD.
 - Within each cluster, order PICs **low -> high effort** (LOW -> MED -> HIGH). Blocked PICs sink to the bottom of their cluster.
 - Cluster order: validate-first -> SOD priority order -> blocked clusters last.

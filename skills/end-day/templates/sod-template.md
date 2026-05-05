@@ -11,8 +11,8 @@ Same writing rules as EOD (movement not status, conclusion first, assume zero co
 
 ## Context to Gather
 - EODs within the window
-- Current SOW (most recent in `Reports/SOW/`)
-- Strategic goals reference docs (if any exist in `04_Reference/`)
+- Current WRM (most recent in `Reports/WRM/`) -- weekly goals and done criteria
+- Current MRM (most recent in `Reports/MRM/`) -- monthly objectives and decision rules
 - Open pickups: glob `02_Projects/**/PIC - *.md`, status: open or picked-up
 - Tomorrow's daily note (if it exists)
 
@@ -42,10 +42,10 @@ and the concrete outcome expected this session.}
 1. **{Goal}** -- {PIC or next step}. Target: {concrete outcome for today}.
 2. **{Goal}** -- {PIC or next step}. Target: {outcome}.
 
-## Strategic Goals
-{Read from reference docs. List each active goal with one-line status.
+## Weekly Goals (from WRM)
+{Inherit the 3 goals from the current WRM. For each, report today's status.
 Flag goals with "no movement" for 3+ consecutive SODs.}
-- **{Goal name}**: {advancing / no movement / not yet started}. {One sentence of evidence.}
+- **{Goal name}** (MRM: {parent objective}): {advancing / no movement / not yet started}. {One sentence of evidence.}
 
 ## Open Work
 {PICs grouped by project. Project names include parenthetical on first mention.

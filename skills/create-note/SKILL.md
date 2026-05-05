@@ -1,13 +1,14 @@
 ---
 name: create-note
 description: >-
-  Unified vault document creator. Handles SD, SPC, PIC, MN, PD, DD, SO, RE, and EB
+  Unified vault document creator. Handles SD, SPC, PIC, MN, PD, DD, SO, RE, EB, and CAM
   documents with correct frontmatter, routing, writing profiles, and type-specific
   structure. Replaces individual create-sd, create-spec, create-pickup, create-MN,
   create-concept-brief, design, and structure skills.
   Trigger: "create note", "create SD", "create spec", "create PIC", "create MN",
   "create PD", "design discussion", "structure outline", "write a report",
-  "executive brief", "create EB", or any request to create a vault document by prefix.
+  "executive brief", "create EB", "create campaign", "pulse campaign",
+  or any request to create a vault document by prefix.
 ---
 
 # Create Note
@@ -30,6 +31,7 @@ Parse the user's request or argument to identify the document type. Accept any o
 | `SO` | "structure outline", "SO for this spec" | `/structure` |
 | `RE` | "create report", "write a report" | (none) |
 | `EB` | "executive brief", "exec brief", "create EB", "write a brief" | (none) |
+| `CAM` | "create campaign", "pulse campaign", "KB campaign" | (none) |
 
 If the type is ambiguous, ask via AskUserQuestion.
 
@@ -63,6 +65,9 @@ This is the single source of truth for document metadata. Every field is mandato
 | `SO` | `Plan` | (General only) | `{project}/structures/{date}/SO - {Name}.md` |
 | `RE` | `Report` | `WP - RE.md` | `{project}/reports/{date}/RE - {Name}.md` |
 | `EB` | `Report` | `WP - RE.md` | `{project}/reports/{date}/EB - {Name}.md` |
+| `CAM` | `Campaign` | (General only) | `{project}/campaigns/CAM - {Name}.md` |
+| `MRM` | `Report` | (General only) | `01_Notes/Reports/MRM/MRM - {YYYY-MM}.md` |
+| `WRM` | `Report` | (General only) | `01_Notes/Reports/WRM/WRM - {YYYY}-W{ww}.md` |
 
 `{project}` = `02_Projects/<project-name>/`
 `{date}` = today's date (YYYY-MM-DD)
@@ -94,6 +99,12 @@ category: <from lookup table>
 ```
 
 Types may add fields (SD adds `version`, PIC adds `status`/`goal`/`pickup_date`, SPC adds `status`/`source`). See templates for type-specific frontmatter.
+
+## Step 4b: Named entity verification (inline)
+
+The General writing profile (`WP - General.md`) contains a "Named entity verification" section with the full procedure. Follow it during Step 4, not after. Verify each person's full name, email, and role at the moment you write them, before moving to the next sentence. If any entity cannot be confirmed via vault grep, use first name only and mark `[UNVERIFIED]`.
+
+This step exists because name fabrication is undetectable by the reader. Every error caught in this session (Gloria Martinez de Luna, Jessica Pina, Jamie Finch at jamie@, Carime at payments@) was a plausible-sounding name constructed from nearby context. The checks are mechanical: grep the vault, confirm the match, move on.
 
 ## Step 5: Post-creation
 

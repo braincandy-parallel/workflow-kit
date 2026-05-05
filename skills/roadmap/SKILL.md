@@ -1,29 +1,31 @@
 ---
 name: roadmap
 description: >-
-  Create or refresh a strategic roadmap (RM) and its Weekly Focus (WF) companion.
+  Create or refresh an MRM (Monthly Roadmap) and its WRM (Weekly Roadmap) companion.
   Audits all open work, aligns it to the user's stated strategic goals, triages
-  PICs into active/parked/blocked, phases tasks across weeks, and produces decision
-  rules for staying focused. Use this skill when the user says "roadmap", "create
-  roadmap", "refresh roadmap", "strategic plan", "what should I focus on", "priority
-  reset", "workload audit", "realign priorities", or after a major Patrick meeting
-  changes strategic direction. Also use when the current RM is expired (past its
-  week range) and orient flags "no current roadmap."
+  PICs into active/parked/blocked, sets monthly objectives with done definitions,
+  derives 3 weekly goals, and produces decision rules for staying focused. See
+  [[SD - Period Reporting System]] for the full architecture. Use this skill when
+  the user says "roadmap", "create roadmap", "refresh roadmap", "strategic plan",
+  "what should I focus on", "priority reset", "workload audit", "realign priorities",
+  or after a major Patrick meeting changes strategic direction. Also use when the
+  current MRM is expired (past its month) and orient flags "no current MRM."
 ---
 
-# Roadmap — Strategic Planning and Weekly Focus
+# Roadmap — Monthly and Weekly Roadmaps
 
-Create a goal-driven strategic roadmap (RM) that maps all active work to the user's
-stated goals, triages open PICs, phases tasks across weeks, and produces a Weekly Focus
-(WF) as the operational lever. The RM is the "why" behind every PIC and SOD priority.
-The WF is the "what this week" derived from it.
+Create a goal-driven MRM (Monthly Roadmap) that maps all active work to the user's
+stated objectives, triages open PICs, phases tasks across weeks, and produces a WRM
+(Weekly Roadmap) as the operational lever. The MRM is the "why" behind every PIC and
+SOD priority. The WRM is the "what this week" derived from it. Per [[SD - Period
+Reporting System]], MRM replaces the old RM + SOM, and WRM replaces the old WF + SOW.
 
 **Design principles:**
 - Goal-driven, not project-driven. Work organizes under strategic goals, not project names.
 - PICs are the unit of work. The RM references existing PICs, it does not invent tasks.
 - Capacity is finite. The skill enforces triage: active vs parked vs blocked.
 - Decision rules prevent accumulation. Every RM includes situational rules for handling new requests.
-- The WF is derived from the RM, never created independently.
+- The WRM is derived from the MRM, never created independently.
 
 ## Path resolution
 
@@ -41,8 +43,8 @@ Accept one of:
 
 Read in parallel:
 
-1. **Current RM** (most recent file in `{vault_root}/01_Notes/Roadmaps/`). If one exists, note its week range and status. A refresh updates it; a new creation supersedes it.
-2. **Current WF** (most recent `WF - *.md` in `{vault_root}/01_Notes/Reports/`). Shows what was planned this week.
+1. **Current MRM** (most recent file in `{vault_root}/01_Notes/Reports/MRM/`). If one exists, note its month and status. A refresh updates it; a new creation supersedes it.
+2. **Current WRM** (most recent file in `{vault_root}/01_Notes/Reports/WRM/`). Shows what was planned this week.
 3. **Patrick's strategic goals** at `{vault_root}/04_Reference/REF - Patrick Strategic Goals.md`. These are the goal headings for the RM. If this file does not exist, goals must come from the user.
 4. **Patrick Request Log** at `{vault_root}/03_Operations/Work REF/Patrick Request Log.md`. Shows all requests and their current status/tier.
 5. **Most recent SOD**. Shows today's priorities and open work inventory.
@@ -152,104 +154,66 @@ Generate 3-5 situational decision rules based on the current context. Standard r
 
 Add context-specific rules based on deadlines, demos, or constraints identified during audit.
 
-## Step 8: Write the RM document
+## Step 8: Write the MRM document
 
-Calculate the week range. Use ISO week numbers (e.g., W17-W19). Write to:
-`{vault_root}/01_Notes/Roadmaps/{today}/RM - Strategic Roadmap {week_range}.md`
+Write to: `{vault_root}/01_Notes/Reports/MRM/MRM - {YYYY-MM}.md`
 
-**Frontmatter:**
-```yaml
----
-date created: YYYY-MM-DD
-tags: [plan, strategic, roadmap]
-category: Plan
-status: active
-source: "Workload audit {today}"
-goals: [goal1, goal2, goal3]
-week_range: "YYYY-WNN to YYYY-WNN"
-active_pics: N
-parked_pics: N
----
-```
+Follow the MRM template at `~/.claude/skills/end-day/templates/mrm-template.md` for structure and frontmatter. The MRM contains: strategic frame paragraph, 3-5 monthly objectives with done definitions, decision rules, systemic landing zones, and carry-forward with objective alignment.
 
-**Structure:**
-1. Introduction paragraph: what this RM covers, how many PICs triaged, link to WF
-2. One `##` section per strategic goal (with phases, task tables, known issues, parked features)
-3. `## Quick wins` section (low-effort tasks not tied to a goal)
-4. `## Parked work` section (PICs, WATCH PRs, PARK PRs, stalled PJLs)
-5. `## Decision rules` section
+## Step 9: Write the WRM document
 
-## Step 9: Write the WF document
+Derive the Weekly Roadmap from the MRM's objectives. Write to:
+`{vault_root}/01_Notes/Reports/WRM/WRM - {YYYY}-W{ww}.md`
 
-Derive the Weekly Focus from the RM's first-week phases. Write to:
-`{vault_root}/01_Notes/Reports/{today}/WF - {iso_week}.md`
+Follow the WRM template at `~/.claude/skills/end-day/templates/wrm-template.md` for structure and frontmatter. The WRM contains: MTD context, 3 weekly goals (each inheriting from an MRM objective with done criteria), in/out scope lists, directives from EOW retro, and Monday frog.
 
-**Frontmatter:**
-```yaml
----
-date created: YYYY-MM-DD
-tags: [report, weekly-focus]
-category: Report
-week: YYYY-WNN
-status: active
-source: "[[RM - Strategic Roadmap {week_range}]]"
----
-```
+## Step 10: Mark previous MRM/WRM as superseded
 
-**Structure:**
-1. Introduction: how many PICs, how many goals, how many active this week
-2. `## This week's goals` (one `###` per active goal):
-   - Active PICs for this week (wikilinked)
-   - What "done" looks like (concrete, verifiable)
-   - Dependencies
-3. `## Also active` (quick wins or small tasks)
-4. `## Explicitly not this week` (everything parked, with reason)
-5. `## Decision rules for this week` (subset of RM rules)
-
-## Step 10: Mark previous RM/WF as superseded
-
-If a previous RM exists, update its frontmatter: `status: superseded` and add `superseded_by: "[[RM - Strategic Roadmap {new_range}]]"`. Same for previous WF.
+If a previous MRM exists for the same month, update its frontmatter: `status: superseded`. Same for previous WRM for the same week.
 
 ## Step 11: Present summary
 
 Output a concise summary:
 
 ```
-Roadmap created: [[RM - Strategic Roadmap {range}]]
-Weekly Focus: [[WF - {week}]]
+MRM created: [[MRM - {YYYY-MM}]]
+WRM created: [[WRM - {YYYY}-W{ww}]]
 
-Goals:
-1. [Goal 1] — [N] PICs active, Phase 1 this week
-2. [Goal 2] — [N] PICs active, Phase 1 this week
-3. [Goal 3] — [N] PICs active, starts [week]
+Objectives:
+1. [Objective 1] — [N] PICs aligned, [done definition]
+2. [Objective 2] — [N] PICs aligned, [done definition]
+3. [Objective 3] — [N] PICs aligned, [done definition]
 
-Triage: [X] PICs active, [Y] parked, [Z] blocked
-Stalled: [N] PJLs with no activity >7 days
+Weekly goals (from WRM):
+1. [Goal 1] — done = [criteria]
+2. [Goal 2] — done = [criteria]
+3. [Goal 3] — done = [criteria]
+
+Triage: [X] PICs active, [Y] parked, [Z] blocked, [W] unaligned
 Decision rules: [N] rules set
 
-The orient skill will load this RM at session start.
-The end-day skill will report goal progress against it.
-The triage-patrick skill will gate new requests against the Weekly Focus.
+Orient loads MRM + WRM at session start.
+End-day reports goal progress against WRM goals.
+SOD inherits priorities from WRM.
 ```
 
 ## Refresh mode
 
 When called with `refresh`:
-1. Read the current RM
+1. Read the current MRM
 2. Re-run Steps 1-4 (audit, confirm goals, align, triage) against current state
-3. Update task statuses in-place (todo -> done for completed work)
-4. Close completed phases, open new ones
-5. Recalculate parked work
-6. Write updated RM (same file, bumped version in frontmatter)
-7. If the current week's WF is stale, regenerate it
+3. Update objective progress in-place
+4. Recalculate parked work and carry-forward
+5. Write updated MRM (same file, bumped version in frontmatter)
+6. If the current week's WRM is stale, regenerate it
 
-## Weekly Focus only mode
+## Weekly Roadmap only mode
 
-When called with `wf`:
-1. Read the current RM (error if none exists)
-2. Identify the upcoming week's phases from the RM
-3. Generate a new WF document for that week
-4. Mark the previous WF as superseded
+When called with `wrm`:
+1. Read the current MRM (error if none exists)
+2. Derive 3 weekly goals from MRM objectives
+3. Generate a new WRM document for the upcoming week
+4. Mark the previous WRM as superseded
 
 ## Writing rules
 

@@ -50,19 +50,28 @@ Skip projects that got time but didn't produce a shippable outcome.}
 - {number/artifact}: {what it does, why it matters in one sentence}
 
 ## Retro
-{2-4 bullets ONLY. Each must have all three parts or it gets cut:}
+{2-4 bullets ONLY. Each must have all four parts or it gets cut.
+Scope: tactical observations (bug patterns, process violations, blocked paths, time sinks).}
 - **Observation:** {what specifically happened, grounded in a project name and system}
   **Impact:** {what would be different if this hadn't happened}
   **Action:** {what changed because of it, or what should change}
+  **Landing zone:** {where this insight produces structural change: next SOD flag | CLAUDE.md rule | L-entry | feedback memory | **[Single-Loop]** if no structural change}
+
+{The 3-day rule: before writing retro items, check if any deferred item has appeared
+in 3+ consecutive EODs with only "carry forward" as the action. If so, flag it:
+"[ESCALATE TO EOW] -- 3+ day deferral pattern, needs governing-variable change."}
 
 {Examples of GOOD retro items:}
-{- **Observation:** KB structure was built from wrong email subset because the sample table had no domain column.}
-{  **Impact:** 4 agents ran against wrong data, ~2 hours lost, structure proposed from 1/3 of actual knowledge.}
-{  **Action:** Added domain column to DB, filed IR, hardened pipeline with Phase Completion Gate that blocks dispatch until all phases pass.}
+{- **Observation:** 5 fabricated names in KB campaigns. Claude constructed full names from nearby context.}
+{  **Impact:** Staff would receive campaigns referencing non-existent colleagues.}
+{  **Action:** Built named entity verification into WP-General, added Rule 3, gated skills.}
+{  **Landing zone:** CLAUDE.md rule + writing profile + skill gates}
 
-{Examples of BAD retro items (cut these):}
-{- "3 sessions ran in parallel" -- no impact, no action, not a lesson}
-{- "Initial clustering used wrong corpus" -- no project name, no system context, no action}
+{Examples of SINGLE-LOOP items (flag, don't cut):}
+{- **Observation:** Process Entity deferred again (day 5).}
+{  **Impact:** SATs remain untested.}
+{  **Action:** Tomorrow's frog with hard time-box.}
+{  **Landing zone:** [Single-Loop] -- next SOD flag only. [ESCALATE TO EOW]}
 
 ## Goals
 {Confirmed goals from user. Carry forward from previous EODs until completed or dropped.

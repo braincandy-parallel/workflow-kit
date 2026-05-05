@@ -10,6 +10,44 @@ What changed, what it means for you, and what to watch for. The `/update-wfk pul
 
 ---
 
+## v3.3.0 - 2026-05-05
+
+### What this release is about
+
+The Period Reporting System, formalized in a new System Definition (SD), redesigns how the kit produces and consumes cadence-based documents. The old ad-hoc RM/WF/SOM/SOW structure is replaced by a principled three-layer operative chain: MRM (Monthly Roadmap), WRM (Weekly Roadmap), and SOD (Start of Day). Each cadence now produces exactly two documents: a backward-looking retrospective (EOD/EOW/EOM) and a forward-looking operative document (SOD/WRM/MRM). Retro sections across all cadences gain a structured insight routing mechanism grounded in Argyris's double-loop learning theory, ensuring observations produce structural change rather than being documented and forgotten.
+
+### New templates
+- **MRM (Monthly Roadmap)** replaces RM + SOM. Sets 3-5 monthly objectives with done-definitions, decision rules, systemic landing zones from EOM diagnosis, and carry-forward with objective alignment.
+- **WRM (Weekly Roadmap)** replaces WF + SOW. Inherits from MRM, narrows to exactly 3 weekly goals with "what done looks like" criteria, explicit in/out scope lists, and directives routed from EOW retro.
+
+### What got better
+
+**end-day** now produces WRM on Fridays (after EOW) and MRM on last workday of the month (after EOM). The old SOM generation step is replaced by MRM. EOD and EOW retro sections gain a mandatory 4-part structure: observation, impact, action, and landing zone. The landing zone declares where each insight produces structural change (CLAUDE.md rule, writing profile, skill gate, L-entry, WRM directive, MRM decision rule). Items without landing zones are flagged as single-loop. A 3-day escalation rule detects when the same item has been carried forward without structural fix and forces the EOW to propose a governing-variable change.
+
+**orient** loads the full operative chain (SOD + WRM + MRM) at session start instead of the old SOD + SOW/SOM/RM mix. Missing operative documents are flagged prominently with recovery instructions.
+
+**closeout** reads MRM objectives and WRM weekly goals (instead of RM/WF) to group session summaries by goal and flag off-focus work.
+
+**pickup** clusters PICs by MRM objective alignment (instead of RM goals), with WRM in-scope list prioritization.
+
+**roadmap** produces MRM + WRM (instead of RM + WF). Core audit/triage/phasing logic unchanged. Output format aligned with the new templates.
+
+**create-note** adds MRM and WRM to the lookup table (replacing SOM).
+
+### What you need to do
+
+After pulling, create your first MRM and WRM:
+1. Run `/roadmap` to generate an MRM for the current month and a WRM for the current week
+2. Or wait for the next `/end-day` on a Friday (produces WRM) or last workday of month (produces MRM)
+
+Old RM and WF files in your vault remain as historical records. They are not deleted.
+
+### Theoretical grounding
+
+The SD references five frameworks that informed the design: GTD review hierarchy (Allen), OKR dual cadence (Doerr), double-loop learning (Argyris and Schon), Viable System Model (Beer), and temporal knowledge graphs (Zep/Graphiti). The insight routing mechanism and double-loop escalation rule are directly derived from Argyris's distinction between changing actions (single-loop) and changing governing variables (double-loop).
+
+---
+
 ## v3.2.1 - 2026-05-04
 
 ### What this release is about

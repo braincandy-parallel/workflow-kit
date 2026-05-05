@@ -1,6 +1,6 @@
 {
   "$schema": "Workflow Kit manifest — declares what ships with the kit vs stays local",
-  "version": "3.2.1",
+  "version": "3.3.0",
 
   "core_skills": [
     "apikeys",

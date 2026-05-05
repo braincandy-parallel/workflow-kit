@@ -13,8 +13,8 @@ Same writing rules as EOD apply here, plus:
 ## Context to Gather
 - All EODs from this week
 - All DNs from this week (for `day_rating` frontmatter values)
-- Current SOW (if exists)
-- Current SOM (if exists)
+- Current WRM (if exists)
+- Current MRM (if exists)
 
 ## Template
 
@@ -57,13 +57,21 @@ Flag any goal with "no movement" for 3+ weeks.}
 - **{Goal name}**: {advancing / no movement / not yet started}. {Which deliverables from "What Shipped" advanced it, or why it didn't move.}
 
 ## Retro
-{3-5 items. Same 3-part structure as EOD: observation, impact, action. ALL THREE REQUIRED.
-Synthesize across the week, don't repeat individual EOD retro items.
+{3-5 items. All four parts required.
+Scope: pattern detection (recurring deferrals, goal drift, build-to-fix ratio, skill gaps, decision debt).
+Synthesize across the week. Don't repeat individual EOD retro items.
 Focus on week-level patterns, not one-day events.}
 
-- **Observation:** {what happened, grounded in project and system names}
-  **Impact:** {what would be different}
-  **Action:** {what changed, or "unresolved, carrying forward"}
+- **Observation:** {what pattern emerged across the week's EODs, grounded in project and system names}
+  **Impact:** {how it affected the week's goals}
+  **Action:** {the governing variable that needs to change to stop the pattern}
+  **Landing zone:** {next WRM directive | L-entry | skill creation PIC | MRM flag | **[Single-Loop]** if no structural change}
+
+{Double-loop escalation rule: scan EOD retros from this week. If any observation
+appeared in 3+ consecutive EODs and was resolved each time with "carry forward"
+(no structural change), the EOW MUST propose a governing-variable change.
+Flag it: "[DOUBLE-LOOP REQUIRED] -- carried forward N consecutive days without structural fix.
+Proposed change: {specific rule, gate, or constraint to add}."}
 
 ## Metrics
 {Hard numbers from the week. Agent-parseable. Skip metrics that don't mean anything standalone.}

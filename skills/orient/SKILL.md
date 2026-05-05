@@ -25,6 +25,12 @@ Do all of these before responding to the user:
 
 1. **Date/time** — Run `date` to anchor your context temporally
 
+1a. **Machine detection** — Run `system_profiler SPHardwareDataType` to identify the current hardware. Use the Model Name and Chip to determine which machine you're on. Known machines:
+   - **Mac Studio** (Apple M2 Ultra): `~/Repos/` is a symlink to `~/Repos/`. Primary workstation.
+   - **MacBook Air** (Apple M2, 24 GB): `~/Repos/` is a direct directory. Portable machine.
+
+   Include the machine name in your orient summary so path assumptions are correct for the session. If the hardware doesn't match any known machine, report it and ask.
+
 1b. **Validate vault paths** — Read `~/.claude/wfk-paths.json`. For each entry in `paths`, check that `{vault_root}/{path}` exists as a directory (use `ls`). If any path is missing:
    - Report which paths are stale: "Path config drift: `{key}` points to `{path}` but directory doesn't exist."
    - Offer to fix: "Want me to update wfk-paths.json with the correct paths?"
@@ -43,19 +49,21 @@ Do all of these before responding to the user:
 
 6. **Lessons files** — Read the general lessons file (cross-project lessons) and any local `lessons.md` in the current project. These are hard-won knowledge from past sessions — ignoring them means repeating the same mistakes.
 
-7. **Period reports** — Read these from `Work Vault/01_Notes/Reports/` to understand what's been happening and what Holden's priorities are. Read in parallel:
-   - **SOD** (daily context): Most recent file in `Reports/SOD/`. Check today first, fall back to most recent. This has the WTD summary, priorities, open PICs, and suggested start.
-   - **EOW** (last week): Most recent file in `Reports/EOW/`. This is the weekly rollup — what shipped, goal progress, retro findings, and next-week setup.
-   - **SOM** (monthly objectives): Current month's file in `Reports/SOM/` (e.g., `SOM - 2026-03.md`). This has Holden's monthly objectives that should frame all work.
-   - **EOM** (last month): Most recent file in `Reports/EOM/`. This has the prior month's retrospective and carry-forwards.
+7. **Period reports** — Read the operative chain from `Work Vault/01_Notes/Reports/` to understand current priorities and recent history. These are agent-facing context documents per [[SD - Period Reporting System]]. Read in parallel:
+   - **SOD** (daily context): Most recent file in `Reports/SOD/`. Check today first, fall back to most recent. Has WTD summary, priorities (inherited from WRM goals), open PICs, and suggested start directive.
+   - **WRM** (weekly goals): Most recent file in `Reports/WRM/`. Has 3 weekly goals with done criteria, in/out scope lists, and directives from EOW retro. Constraints flow down from MRM.
+   - **MRM** (monthly objectives): Current month's file in `Reports/MRM/` (e.g., `MRM - 2026-05.md`). Has 3-5 monthly objectives with done definitions, decision rules, systemic landing zones, and carry-forward. This is the highest-level strategic frame.
+   - **EOW** (last week): Most recent file in `Reports/EOW/`. Weekly rollup with pattern-level retro and insight routing.
+   - **EOM** (last month): Most recent file in `Reports/EOM/`. Monthly retrospective and systemic diagnosis.
 
-   Skip any that don't exist. The SOD is the most important, it's the freshest context. The others provide progressively wider framing.
+   Skip any that don't exist. The SOD is the most important (freshest context). WRM and MRM provide the strategic frame. EOW and EOM provide wider historical context.
 
-7b. **Strategic context** — Read the current Roadmap and Weekly Focus to understand what goals are driving all work:
-   - **RM** (roadmap): Most recent file in `01_Notes/Roadmaps/`. This maps all active work to strategic goals, defines what's parked, and provides decision rules for incoming requests. It is the "why" behind every PIC and SOD priority.
-   - **WF** (weekly focus): Most recent file matching `WF - *.md` in the latest dated subfolder of `Reports/`. This names the 3 goals for the current week and lists what's explicitly not this week.
+   If MRM and WRM both exist, present a brief strategic summary in the orient output: "Weekly goals: [goal 1], [goal 2], [goal 3] (from WRM W{ww}). MRM objectives: [obj 1], [obj 2], ... [N] open PICs aligned, [M] unaligned." This anchors the session in strategy, not just tasks.
 
-   If both exist, present a brief strategic summary in the orient output: "Active goals: [goal 1], [goal 2], [goal 3]. [N] open PICs aligned. [M] parked." This anchors the session in strategy, not just tasks.
+   **Missing document flags:** If any operative document is missing, flag it prominently:
+   - No MRM for current month: "No MRM found for {YYYY-MM}. Run /end-day on the last workday of the month to generate one."
+   - No WRM for current week: "No WRM found for W{ww}. Run /end-day on Friday to generate one."
+   - No SOD for today: "No SOD for today. Run /end-day yesterday or backfill."
 
 8. **Cross-reference reports with open work** — This step prevents wasted investigation. After reading the SOD and EOW:
    - For each open PIC in the SOD, check whether the EOW mentions the same system, pipeline, or project as recently shipped/deployed/built

@@ -1,6 +1,6 @@
 ---
 name: end-day
-description: "Aggregate the day's work into an EOD report and generate tomorrow's SOD (agent context document). Rolls up all closeout entries from the daily note, compares against SOD priorities, runs a mini-retro, discovers goals for user confirmation, then writes the SOD that orient will load tomorrow. On Fridays, also produces an EOW. On the last workday of the month, also produces an EOM. Use this skill when the user says 'end day', 'end of day report', 'EOD report', 'daily report', 'wrap up the day', 'day summary', 'how did today go', 'end-day', or wants a synthesized view of what happened across all sessions. This is different from /closeout (which wraps a single terminal session and creates PICs) -- end-day aggregates ALL closeouts into the day's official record and prepares tomorrow's agent context. Should typically run after the last /closeout of the day."
+description: "Aggregate the day's work into an EOD report and generate tomorrow's SOD (agent context document). Rolls up all closeout entries from the daily note, compares against SOD priorities, runs a mini-retro with insight routing (observation/impact/action/landing zone), discovers goals for user confirmation, then writes the SOD that orient will load tomorrow. On Fridays, also produces an EOW and WRM (Weekly Roadmap). On the last workday of the month, also produces an EOM and MRM (Monthly Roadmap). See [[SD - Period Reporting System]] for the full system definition. Use this skill when the user says 'end day', 'end of day report', 'EOD report', 'daily report', 'wrap up the day', 'day summary', 'how did today go', 'end-day', or wants a synthesized view of what happened across all sessions. This is different from /closeout (which wraps a single terminal session and creates PICs) -- end-day aggregates ALL closeouts into the day's official record and prepares tomorrow's agent context. Should typically run after the last /closeout of the day."
 ---
 
 # End of Day -- Daily Aggregation Report
@@ -11,26 +11,26 @@ The EOD is the **official record of what happened today**. It aggregates all clo
 
 After producing the EOD, this skill also generates **tomorrow's SOD** -- the agent context document that orient loads at session start. This keeps everything in one place: end-day is the only skill that writes reports.
 
-On Fridays, this skill also produces an **EOW (End of Week)** report rolling up the week's EODs. On the last workday of the month, it also produces an **EOM (End of Month)** report rolling up the month's EOWs.
+On Fridays, this skill also produces an **EOW (End of Week)** report rolling up the week's EODs, and a **WRM (Weekly Roadmap)** setting next week's 3 goals with done criteria. On the last workday of the month, it also produces an **EOM (End of Month)** report and an **MRM (Monthly Roadmap)** setting next month's 3-5 objectives with done definitions and decision rules. See [[SD - Period Reporting System]] for the full architecture.
 
-## Roadmap Awareness
+## Operative Document Awareness
 
-Before aggregating, read the current **RM** (most recent file in `01_Notes/Roadmaps/`) and **WF** (most recent `WF - *.md` in the latest dated subfolder of `Reports/`). If both exist, add a **Goal Progress** section to the EOD that reports at the goal level, e.g.:
+Before aggregating, read the current **MRM** (most recent file in `01_Notes/Reports/MRM/`) and **WRM** (most recent file in `01_Notes/Reports/WRM/`). If both exist, add a **Goal Progress** section to the EOD that reports at the goal level against WRM goals:
 
 ```
 ## Goal Progress
-- **Goal A:** Significant progress (pipeline unblocked, 3 items shipped). Remaining: final integration.
-- **Goal B:** Iterated on content depth, 4 items expanded. Ownership tracking not started.
-- **Goal C:** No progress today.
+- **Goal 1 (WRM):** Significant progress (pipeline unblocked, 3 items shipped). Remaining: final integration.
+- **Goal 2 (WRM):** Iterated on content depth, 4 items expanded. Ownership tracking not started.
+- **Goal 3 (WRM):** No progress today.
 ```
 
 This makes it visible when a goal stalls across days. The SOD should carry forward any goal that had no progress, flagging it: "Goal [X] had no progress yesterday. Prioritize or explicitly defer?"
 
-On **Fridays** (EOW), also compare the week's goal progress against the WF's "What 'done' looks like" criteria. Did the weekly goals ship? What carries forward to next week's WF?
+On **Fridays** (EOW), compare the week's goal progress against the WRM's "what done looks like" criteria. Did the weekly goals ship? What carries forward to next week's WRM?
 
 ## Path Resolution
 
-Read `~/.claude/wfk-paths.json` at startup. Use `vault_root` and `paths` to resolve all directory references in these instructions. Key mappings: `{paths.daily_notes}` for daily notes, `{paths.reports}` for all report subdirectories (SOD, EOD, EOW, SOM, SOW, EOM, Triage), `{paths.projects}` for project tree, `{paths.pickups}` for cross-cutting pickups. If the file doesn't exist, use the defaults in these instructions and warn once.
+Read `~/.claude/wfk-paths.json` at startup. Use `vault_root` and `paths` to resolve all directory references in these instructions. Key mappings: `{paths.daily_notes}` for daily notes, `{paths.reports}` for all report subdirectories (SOD, EOD, EOW, WRM, EOM, MRM, Triage), `{paths.projects}` for project tree, `{paths.pickups}` for cross-cutting pickups. If the file doesn't exist, use the defaults in these instructions and warn once.
 
 ## Step 0: Day Rating
 
@@ -220,7 +220,7 @@ Read in parallel. Skip missing files silently.
    - These represent carry-forward work from today's closeouts
 4. **PICs closed today** -- glob for PICs where `closed_date` = today
    - These represent completed work
-5. **Current SOW** -- most recent in `01_Notes/Reports/SOW/` (if exists)
+5. **Current WRM** -- most recent in `01_Notes/Reports/WRM/` (if exists)
    - For week-level goal context
 
 ## Step 2: Synthesize the EOD
@@ -257,6 +257,22 @@ Read and follow the template in `templates/eow-template.md` (in this skill's fol
 If today is the last workday of the month, also produce an EOM.
 
 Read and follow the template in `templates/eom-template.md` (in this skill's folder).
+
+## Step 5b: MRM (immediately after EOM)
+
+If you just produced an EOM in Step 5, also produce the **MRM (Monthly Roadmap)** for the new month. The MRM replaces the old SOM and RM. It sets 3-5 monthly objectives with done-definitions, decision rules, systemic landing zones from the EOM, and a carry-forward list.
+
+Read and follow the template in `templates/mrm-template.md` (in this skill's folder). It contains the objective drafting protocol, user-confirmation step (via AskUserQuestion), strategic frame guidance, and save location.
+
+The MRM is mandatory whenever EOM fires. Skipping it leaves the new month without an operative document, which causes orient to flag "no MRM found for current month" at every session start until one is written.
+
+## Step 5c: WRM (Fridays, after EOW)
+
+If you just produced an EOW in Step 5, also produce the **WRM (Weekly Roadmap)** for the next week. The WRM replaces the old WF and SOW. It narrows the MRM's monthly objectives into exactly 3 weekly goals with done criteria, in/out lists, and directives from the EOW retro.
+
+Read and follow the template in `templates/wrm-template.md` (in this skill's folder). It contains goal inheritance from MRM, user confirmation, and save location.
+
+The WRM is mandatory whenever EOW fires. Skipping it leaves the next week without goal framing, degrading the SOD's ability to set meaningful daily priorities.
 
 ## Step 6: Vault Hygiene Scan
 

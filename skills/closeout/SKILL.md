@@ -11,17 +11,17 @@ You are closing out a work session. Your job is to capture what was done, log it
 
 Read `~/.claude/wfk-paths.json` at startup. Use `vault_root` and `paths` to resolve directory references (e.g., `{paths.daily_notes}/DN - YYYY-MM-DD.md`). If the file doesn't exist, use defaults and warn once.
 
-## Step 0: Roadmap Context
+## Step 0: Operative Document Context
 
-Read the current **RM** (most recent file in `01_Notes/Roadmaps/`) and **WF** (most recent `WF - *.md` in the latest dated subfolder of `Reports/`). Use these to:
+Read the current **MRM** (most recent file in `01_Notes/Reports/MRM/`) and **WRM** (most recent file in `01_Notes/Reports/WRM/`). Use these to:
 
-1. **Group the session summary by goal** in Step 1d. Instead of a flat list of topics, present work grouped by which strategic goal it served: "Goal A: [work done]. Goal B: [work done]. Off-focus: [work done]." This makes goal-level progress visible at closeout.
+1. **Group the session summary by goal** in Step 1d. Instead of a flat list of topics, present work grouped by which WRM weekly goal it served: "Goal 1: [work done]. Goal 2: [work done]. Off-focus: [work done]." This makes goal-level progress visible at closeout.
 
-2. **Flag off-focus work** when deciding which topics need PICs (Step 3). If a topic doesn't serve any current weekly goal, note it: "This work isn't on the weekly focus. PIC it, or just log to PJL?" This is informational, not a gate. Sometimes reactive work is necessary. The flag just makes the choice conscious.
+2. **Flag off-focus work** when deciding which topics need PICs (Step 3). If a topic doesn't serve any current WRM goal, note it: "This work isn't in the WRM's in-scope list. PIC it, or just log to PJL?" This is informational, not a gate. Sometimes reactive work is necessary. The flag just makes the choice conscious.
 
-3. **Pass goal context to /create-pickup** (Step 3). The create-pickup skill has its own capacity gate and goal-tagging. Pass the RM goal name so it can tag the PIC's frontmatter without re-reading the RM.
+3. **Pass goal context to /create-pickup** (Step 3). The create-pickup skill has its own capacity gate and goal-tagging. Pass the MRM objective name so it can tag the PIC's frontmatter without re-reading the MRM.
 
-If no RM or WF exists, skip this step. All downstream behavior works without it.
+If no MRM or WRM exists, skip this step. All downstream behavior works without it.
 
 ## Step 0b: PIC State Snapshot (MANDATORY)
 
