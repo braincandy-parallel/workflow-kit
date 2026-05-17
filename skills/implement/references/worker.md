@@ -40,6 +40,18 @@ For {{ORG}} tasks, add: "Environment: {env}. Verified at: {url}."
 If your task produced a written artifact, prefix it `ARE -` and save to `<project>/reports/YYYY-MM-DD/`
 
 Source: MQ-9, MQ-20, MQ-21, RC-6 (marathon postmortem). Pattern 5: deploy != verify.
+
+## Pre-commit Gate
+
+Loaded from `~/.claude/skills/implement/features/pre-commit-lint-gate.md` when active (default-on).
+
+## Smoke-check paired values symmetrically
+
+Loaded from `~/.claude/skills/implement/features/paired-value-smoke-checks.md` when active (default-on).
+
+## Out-of-band user instructions
+
+Loaded from `~/.claude/skills/implement/features/out-of-band-instruction-reporting.md` when active (default-on).
 ```
 
 ## Model Selection

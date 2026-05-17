@@ -10,6 +10,49 @@ What changed, what it means for you, and what to watch for. The `/update-wfk pul
 
 ---
 
+## v3.5.0 - 2026-05-17
+
+### What this release is about
+
+This release introduces a **features + modes architecture** for `/implement`. Atomic behaviors (features) live in their own files; curated collections (modes) compose them. Plans opt into experimental behaviors by declaring `mode:` or `features:` in their frontmatter — no fork of the skill, no separate `/implement-turbo` command. The default mode preserves existing behavior; experimental modes (`turbo`, `swarm`) layer in opportunities that have been validated against real parallel-worker sprints. `/retro` gains a scorecard hook so RETs running under non-default modes carry comparable metrics and can be A/B'd against baseline runs.
+
+### What got better
+
+**`/implement` — features + modes architecture.** The skill now reads `mode:` and `features:` from the plan's frontmatter and resolves an active feature list before any worker dispatch. Each feature is a small file under `features/` documenting what it modifies, when it activates, and how to escape if it goes wrong. Default mode loads five default-on features (pre-commit lint gate, pre-flight readiness check, paired-value smoke checks, out-of-band instruction reporting, dev-server concurrency contract). Turbo mode adds three low-risk experimental features (persistent dev-server worker, design-pass-on-first-page, parallel harness author). Swarm mode adds two heavier experimental features (multi-surface parallelism, two-team topology). Plans can also cherry-pick features beyond their mode via `features.add:` / `features.remove:`. Existing plans without a `mode:` field load the implicit default and behave exactly as before.
+
+**`/implement` — five default-on features extracted.** Behaviors that previously lived inline in `SKILL.md` and `references/worker.md` are now first-class feature files. The pre-commit lint gate forces each worker to run the project's lint command before commit (catches the class of cross-worker style drift that integration-time fixups historically absorbed). The pre-flight readiness check runs a 60-second pre-dispatch validation (deps declared, ports free, no stale worktrees, target files exist, dev server ownership documented). Paired-value smoke checks require workers to grep for *both* expected values when checking format symmetry, not just one. Out-of-band instruction reporting requires workers to surface direct user instructions as `User routed direct instruction: [verbatim quote]` so coordinators see side-channel work. The dev-server concurrency contract codifies single-owner-per-`.next/` rules and per-worker port assignment.
+
+**`/retro` — scorecard hook for mode + feature runs.** When a sprint ran under a non-default mode, the RET frontmatter now carries a `playbook_metrics` block (mode, features active, wall clock, fix ratio, false fails) plus a `baseline_comparison` block citing the most recent default-mode sprint of comparable scope. After two or three runs at the same mode, the user can see whether the experimental features actually saved time and decide to promote, retire, or refine them.
+
+### What you need to do
+
+Nothing required. Plans without `mode:` or `features:` frontmatter continue to behave exactly as before — the default mode is the implicit baseline.
+
+If you want to try an experimental mode on a future sprint:
+
+```yaml
+---
+status: Ready
+ceremony_tier: light
+mode: turbo
+---
+```
+
+Or cherry-pick individual features:
+
+```yaml
+features:
+  add: [persistent-dev-server-worker]
+```
+
+The skill will announce the active mode + feature list before dispatching any workers so you can verify it matched your intent.
+
+### Migration
+
+`/update-wfk pull` installs the new `features/` and `modes/` directories under `~/.claude/skills/implement/`. Existing inline sections in `SKILL.md` and `references/worker.md` are replaced with one-line citations to the feature files. No plan file changes required.
+
+---
+
 ## v3.4.0 - 2026-05-15
 
 ### What this release is about

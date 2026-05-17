@@ -121,6 +121,32 @@ Once the user approves (all or a subset of proposed changes):
 3. **Announce the target metric** for next work unit: "Goal: < X% fix time (down from Y%)"
 4. **Offer /learn** for any lessons that should also go into the general lessons file
 
+## Scorecard for /implement Mode + Feature Runs
+
+If the sprint ran under a non-default `/implement` mode (i.e., PL frontmatter had `mode:` set to something other than `default`, or `features:` overrides), the RET frontmatter must include a scorecard block:
+
+```yaml
+playbook_metrics:
+  mode: <mode-name>
+  features_active: [<feature-name>, ...]
+  features_added: [<from PL features.add>]
+  features_removed: [<from PL features.remove>]
+  wall_clock_hours: <numeric>
+  pl_estimate_compression: <numeric>x  # PL estimate / actual
+  fix_ratio: <0.0-1.0>
+  preventable_fixes: <int>
+  false_fails: <int>
+  baseline_comparison:
+    last_baseline_sprint: "[[RET - ...]]"  # most recent default-mode sprint of comparable scope
+    wall_clock_hours_baseline: <numeric>
+    fix_ratio_baseline: <0.0-1.0>
+    false_fails_baseline: <int>
+```
+
+The audit ARE (Phase 1 of /retro) collects the raw numbers. The Phase 2 review writes them into the RET frontmatter. Phase 3 may surface trend deltas vs prior runs of the same mode/features combo.
+
+After 2-3 RET runs at the same mode, the user can decide: promote features to default-on, retire them, or refine specific behaviors.
+
 ## Trigger Signals
 
 ### Automatic (at end of /implement)

@@ -1,7 +1,6 @@
 {
   "$schema": "Workflow Kit manifest — declares what ships with the kit vs stays local",
-  "version": "3.4.0",
-
+  "version": "3.5.0",
   "core_skills": [
     "apikeys",
     "article-intel",
@@ -49,7 +48,6 @@
     "video-intel",
     "web-theme"
   ],
-
   "org_skills": [
     "ag-fwis-qa",
     "ag-investigate",
@@ -96,7 +94,6 @@
     "update-agent-rules",
     "vps-deploy"
   ],
-
   "deprecated_skills": [
     "update-skills",
     "update-workflow-kit",
@@ -117,7 +114,6 @@
     "create-pulse-campaign",
     "kb-to-campaign"
   ],
-
   "renamed_skills": {
     "plan-spec": {
       "new_name": "create-plan",
@@ -175,7 +171,6 @@
       "reference_update": "Replace /create-pulse-campaign with /campaign (org-skill, not shipped with kit)"
     }
   },
-
   "deprecation_context": {
     "update-skills": "Replaced by update-wfk (same functionality, better name)",
     "update-workflow-kit": "Replaced by update-wfk (same functionality, better name)",
@@ -196,13 +191,14 @@
     "create-pulse-campaign": "Unified into the campaign skill (org-only). All campaign work (design, refine, import) now goes through one skill.",
     "kb-to-campaign": "Folded into the campaign skill (org-only) — design phase reads KB analysis gaps directly."
   },
-
   "note": "update-workflow is NOT deprecated -- it is the developer's personal vault sync skill. It does not ship with the kit because it is personal, not because it is replaced.",
-
   "runtime_config": {
     "path": "~/.claude/wfk-paths.json",
     "written_by": "/setup (Step 3b)",
-    "validated_by": ["/orient (Step 1b)", "/update-wfk pull (Step 14.4)"],
+    "validated_by": [
+      "/orient (Step 1b)",
+      "/update-wfk pull (Step 14.4)"
+    ],
     "schema": {
       "config_version": "integer, bumped on schema changes",
       "last_validated": "YYYY-MM-DD, updated by orient on successful validation",
@@ -210,7 +206,6 @@
       "paths": "object mapping logical names to relative directories under vault_root"
     }
   },
-
   "sync_rules": {
     "skills": {
       "on_push": "Only push core_skills. Strip hardcoded paths and org-specific references.",
