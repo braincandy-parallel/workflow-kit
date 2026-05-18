@@ -10,6 +10,30 @@ What changed, what it means for you, and what to watch for. The `/update-wfk pul
 
 ---
 
+## v3.5.2 - 2026-05-18
+
+### What this release is about
+
+This patch fixes a `/pickup` failure mode: when a TRI cache exists from earlier in the day, two agents reading the same TRI could produce substantially different presentations because Step 5's "Presentation rules" read like *invention* rules, not *rendering* rules. One agent would render the TRI's clusters verbatim, another would re-cluster from MRM objectives and SOD priorities, drop the TRI's batch hints (e.g., shared-codebase batches), and re-number PICs from scratch. Same input, divergent output.
+
+### What got better
+
+**`/pickup` — Step 5 now has explicit Render vs Invent paths.** When a cached TRI is loaded via Step 0a, the TRI's `## Project Clusters` and `## Recommended Session Order` tables are the source of truth, agents render them verbatim, do not re-cluster, do not re-number. The Invent path (no usable TRI, fresh full scan) still derives clusters from MRM objectives and walks clusters for selection IDs. Result: cached-TRI presentations become deterministic across agents.
+
+**`/pickup` — "Validate first" cluster widened.** Previously scoped to picked-up PICs flagged in the SOD. Now also includes closed PICs that the active SOD or WRM still names as goal anchors (sourced from the TRI's `## Supersession Findings`). When yesterday's frog PIC closes overnight, the SOD's stale reference is surfaced for adjudication before regular pickup work.
+
+**`/pickup` — Selection numbering pinned to TRI.** In the Render path, selection IDs come from the TRI's `## Recommended Session Order` and are reused verbatim. The "walk clusters top-to-bottom" numbering rule now applies only to the Invent path.
+
+### What you need to do
+
+Nothing required. The changes are confined to Step 5 and Step 5a. Existing TRI files continue to work, the new Render path uses fields that the TRI format has always had.
+
+### Migration
+
+`/update-wfk pull` updates `skills/pickup/SKILL.md`. No plan file or TRI format changes required.
+
+---
+
 ## v3.5.1 - 2026-05-18
 
 ### What this release is about

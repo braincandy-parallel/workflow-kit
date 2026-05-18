@@ -126,7 +126,9 @@ Assign batch verdicts:
 
 ### Step 5: Write TRI and Present the Triage
 
-**Write the TRI file FIRST, before presenting anything to the user.** The TRI is not a follow-up task -- it is the output artifact of the triage. Compute the triage data (Steps 1-4 or 0a), write the TRI file (see format below), then present the summary to the user. If the TRI is not written before you show the user the "Pick a number" prompt, the triage is incomplete. No exceptions.
+**This step has two paths.** If you arrived here via Step 0a (cached TRI loaded), the TRI's `## Project Clusters` and `## Recommended Session Order` tables are the source of truth, you *render* them, you do not re-cluster or re-number. The Presentation Rules below split into a Render path and an Invent path, follow the one that matches.
+
+**Write the TRI file FIRST, before presenting anything to the user.** The TRI is not a follow-up task -- it is the output artifact of the triage. Compute the triage data (Steps 1-4 or 0a), write the TRI file (see format below), then present the summary to the user. If the TRI is not written before you show the user the "Pick a number" prompt, the triage is incomplete. No exceptions. (In the cached-TRI path, this requirement is satisfied by the Step 0a update.)
 
 #### Step 5a: Live Status Verification (MANDATORY before presenting)
 
@@ -135,19 +137,32 @@ Before presenting the triage to the user, verify the frontmatter status of every
 1. For each PIC in the triage, read lines 1-10 of the file to check the `status:` field.
 2. Filter the presentation to show only PICs with `status: open`.
 3. PICs with `status: picked-up` go into the "Validate first" cluster (they may need closing, not working).
-4. PICs with `status: closed` are removed from the presentation entirely.
-5. If a PIC's status changed since the TRI was written, update the TRI file to match before presenting.
+4. Closed PICs that the active SOD or WRM names as goal anchors also go into "Validate first", render them as stale references with the closed status visible, so the user can re-anchor the goal before pickup. Read the TRI's `## Supersession Findings` section to find these.
+5. Other PICs with `status: closed` are removed from the presentation entirely.
+6. If a PIC's status changed since the TRI was written, update the TRI file to match before presenting.
 
 This step prevents showing stale PICs that were already picked up or closed by other sessions. It runs every time, even when the TRI was just generated moments ago. The cost is ~20 file reads (frontmatter only); the cost of skipping it is presenting work that's already done.
 
 **Presentation rules (mandatory):**
-- Present ONE grouped-by-cluster table -- not three separate views.
-- Clusters are MRM objectives when available (e.g. "Objective A", "Objective B", "Unaligned"). Without an MRM, fall back to project themes. Pull the theme from the SOD priorities when possible.
-- A "Validate first" cluster always comes first if there are picked-up PICs flagged in the SOD.
-- Within each cluster, order PICs **low -> high effort** (LOW -> MED -> HIGH). Blocked PICs sink to the bottom of their cluster.
-- Cluster order: validate-first -> SOD priority order -> blocked clusters last.
-- Every PIC gets a global selection number (`#`), assigned by walking the clusters top-to-bottom so #1 is the top of the first cluster.
-- Use a single table with cluster headers as separator rows, OR one small table per cluster -- either is fine, but no separate "by complexity" or "session order" tables.
+
+*Shared (both paths):*
+- Present ONE grouped-by-cluster view, no separate "by complexity" or "session order" tables.
+- "Validate first" cluster always comes first when populated (per Step 5a items 3-4).
+- Cluster order after Validate-first: SOD priority order, then blocked / dropped clusters last.
+- Within each cluster, order PICs LOW, MED, HIGH. Blocked PICs sink to the bottom.
+- One small table per cluster is fine, or one big table with cluster headers as separator rows.
+- End with: "Pick a number to load, or tell me which cluster to batch."
+
+*Render path (cached TRI loaded via Step 0a):*
+- The TRI's `## Project Clusters` table is the canonical cluster list. Render those clusters in that order. Do not invent new clusters and do not collapse multiple TRI clusters into one.
+- The TRI's `## Recommended Session Order` numbers are the canonical selection IDs. Reuse them verbatim. Do not re-number by walking clusters.
+- Step 5a status changes apply as overlays: move newly-closed-but-SOD-referenced PICs into Validate-first, remove other newly-closed PICs, and if a cluster ends up empty, skip rendering it.
+- If the TRI is missing a `Project Clusters` table or `Recommended Session Order` numbers (malformed), fall back to the Invent path and overwrite the TRI.
+
+*Invent path (no usable TRI, fresh full scan):*
+- Clusters are MRM objectives when available ("Objective A", "Objective B", "Unaligned"). Without an MRM, fall back to project themes from SOD priorities.
+- Every PIC gets a global selection number assigned by walking the clusters top-to-bottom, so #1 is the top of the first cluster.
+- Write the TRI before presenting (per the Step 5 header rule).
 
 **Format:**
 
@@ -290,8 +305,8 @@ Do NOT create empty subdirectories (`specs/`, `plans/`, `reports/`). Those are c
 3. Read the project's `CLAUDE.md` and `lessons.md` (created above if they didn't exist)
 4. If the PIC references a spec or plan, read those too
 5. **Read the Project Log** if one exists at `02_Projects/<project>/PJL - <Project Name>.md`. Read the most recent 2-3 date sections (newest entries). This gives you the project's recent history -- what was built, what decisions were made, what failed, what's deployed. Don't read the entire PJL if it's large; the recent entries are what matter for context loading.
-6. **Repo freshness check.** If the PIC references code under `~/Repos/`, run `git fetch origin && git log HEAD..origin/main --oneline` in that repo before reading any code files. If commits exist upstream, pull first. The local copy may be weeks behind, and starting a session against a stale tree wastes the entire pickup.
-7. **Spec check.** If the PIC's next steps involve implementing a feature on an existing system, glob the project's `specs/` directory for related specs. Read any that match the work domain before starting implementation.
+6. **Repo freshness check (L58).** If the PIC references code under `~/Repos/`, run `git fetch origin && git log HEAD..origin/main --oneline` in that repo before reading any code files. If commits exist upstream, pull first. The local copy may be weeks behind. An entire session was wasted (2026-05-11) because this check was skipped.
+7. **Spec check (L59).** If the PIC's next steps involve implementing a feature on an existing system, glob the project's `specs/` directory for related specs. Read any that match the work domain before starting implementation.
 
 Build understanding of: project scope, what was done, concrete next steps, blockers, and any user preferences from the previous session.
 
@@ -324,9 +339,9 @@ Update the PIC's frontmatter immediately:
 The PIC's `project:` frontmatter is a hint, not authority. PICs sometimes bundle work across projects, get filed under the wrong one initially, or drift. Before writing to ANY PJL, validate that the work scope actually matches the named project.
 
 1. Scan the PIC body (`## Context`, `## What Needs to Happen Next`, `## Key Files`) for project signals:
-   - **File paths**: `apps/<app>/`, `services/<svc>/`, `packages/<pkg>/` from the codebase
+   - **File paths**: `apps/<app>/`, `services/<svc>/`, `packages/<pkg>/` from the monorepo
    - **Vault paths**: `02_Projects/<project>/` references
-   - **Container names**: each maps to a known project
+   - **Container names**: `kb`, `flora-api`, `portal`, `admin`, etc., each map to known projects
    - **Codebase domains**: function/file names that belong to a specific subsystem
 2. Compare the dominant signals against the `project:` field.
 3. If signals strongly disagree (the work touches a different project's surface than the PIC claims), use AskUserQuestion to confirm the target before writing. Options should include the frontmatter project, the project the signals point to, and "split into multiple PICs."
@@ -384,11 +399,11 @@ Append a closing update:
 1. **System Definitions.** Grep the project's directory and `04_Reference/` for `SD - *.md` files related to the PIC's domain. Read any matches and verify their Mechanics, Principles, and Adjacent Systems sections still match the system's current behavior. If the PIC changed how the system works, update the SD.
 2. **REF documents.** Check for `REF - *.md` files that describe the system (runbooks, work rules, architecture references). Verify they reflect the current state.
 3. **Project CLAUDE.md.** If the PIC introduced new conventions, tools, or architectural patterns, update the project's agent config.
-4. **Lessons.** If the PIC resolved an issue that produced a lesson, verify the lesson's trigger condition and action are still accurate.
+4. **Lessons.** If the PIC resolved an issue that produced a lesson (`L#`), verify the lesson's trigger condition and action are still accurate.
 
 Report what you checked and whether updates were needed. If an SD, REF, or CLAUDE.md was updated, wikilink the updated file in the Closing Update's Artifacts list.
 
-This gate exists because system changes routinely outpace documentation. A PIC that changes a refresh cadence, or retires one auth path in favor of another, leaves stale docs that mislead every future agent until someone catches the drift. Catching it at close is cheaper than discovering it later.
+This gate exists because system changes routinely outpace documentation. A PIC that changes refresh cadence from 6 hours to 30 minutes, or retires an SSH proxy in favor of local auth, leaves stale docs that mislead every future agent until someone catches the drift. Catching it at close is cheaper than discovering it later. (Source: 2026-05-12, NLM Auth PIC closed without updating SD v3, user caught 5 stale claims during sign-off audit.)
 
 ### Batch Continuation
 
