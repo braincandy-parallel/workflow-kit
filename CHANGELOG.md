@@ -10,6 +10,28 @@ What changed, what it means for you, and what to watch for. The `/update-wfk pul
 
 ---
 
+## v3.5.1 - 2026-05-18
+
+### What this release is about
+
+This patch restores the Verifier role split inside `/implement` as a default-on feature and adds orphan-team detection to `/orient`. Both changes target failure modes documented in IRs from the 2026-05-17 evening session: a 7-surface parallel build that ran without verifiers because the v3.4.0 Verifier Pass was extracted from `SKILL.md` body during the v3.5.0 features split without a replacement feature, and a successor session that wasted time on a team whose lead tmux pane was gone (SendMessage returning `success: true` while messages dropped silently).
+
+### What got better
+
+**`/implement` — Verifier Pass restored as a default-on feature.** The new `features/verifier-pass-on-behavioral-changes.md` enforces actor/judge separation on behavioral changes. The Worker that wrote the change does NOT verify it; a separate Verifier dispatched with the template in `references/verifier.md` runs 1-3 pre-selected I/O pairs and produces the PASS/FAIL verdict. The feature fires automatically on standard tier with behavioral acceptance criteria OR on any tier when `worker_count >= 3` (the multi-surface parallel-build trigger). Model diversity preferred (Worker sonnet → Verifier opus, or vice versa). Composes with `multi-surface-parallelism`: N parallel workers produce N parallel verifiers in a matched dispatch round. The feature is based on `/qa-coord`'s three-role pattern but scaled down for general behavioral changes — full pipeline matrix work still belongs in `/qa-coord`.
+
+**`/orient` — Step 1c orphan-team detection.** At session start, `/orient` now scans `~/.claude/teams/` and reports any team whose `leadSessionId` is no longer in tmux. The skill explains the failure mode (`SendMessage` returns `success: true` to dead panes but drops messages; `TeamDelete` cannot remove orphan teams from outside the original session). If 5+ orphans exist, the skill recommends a batch cleanup with archive-first guidance. This prevents agents from assuming an orphan team is reachable, sending messages, and waiting forever for responses that will never come.
+
+### What you need to do
+
+Nothing required. Both changes are default-on. The Verifier Pass fires automatically when its trigger conditions are met; plans can opt out per-PL via `features.remove: [verifier-pass-on-behavioral-changes]` when the change is purely additive or fully captured by smoke checks. Orphan-team detection runs once at orient and reports findings in the orient summary.
+
+### Migration
+
+`/update-wfk pull` installs `features/verifier-pass-on-behavioral-changes.md`, updates `modes/default.md` to include it (six default-on features total now), adds the Verifier Pass pointer to `SKILL.md`, and patches `orient/SKILL.md` Step 1c. No plan file changes required.
+
+---
+
 ## v3.5.0 - 2026-05-17
 
 ### What this release is about

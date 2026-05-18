@@ -183,6 +183,12 @@ For auth/middleware code changes, run the focused eval from `references/security
 An LLM review of ONLY the auth diff against a checklist: session validation, error message leaks,
 parameterized queries, CSRF, rate limiting. Skip for CRUD, UI, config.
 
+## Quality: Verifier Pass (Behavioral Changes)
+
+Loaded from `features/verifier-pass-on-behavioral-changes.md` when active (default-on under `mode: default`).
+
+Fires automatically on standard tier with behavioral acceptance criteria, OR on any tier when `worker_count >= 3`. The Worker that wrote the change does NOT verify it; a separate Verifier dispatched with the template in `references/verifier.md` runs pre-selected I/O pairs and produces the PASS/FAIL verdict. See the feature file for the full mechanism, scope rules, and PJL logging requirement.
+
 ## Gates
 
 **Light tier:** No gates. Workers self-verify via smoke checks.

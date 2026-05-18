@@ -1,7 +1,7 @@
 ---
 mode: default
 inherits: none
-adds: [pre-commit-lint-gate, pre-flight-readiness-check, paired-value-smoke-checks, out-of-band-instruction-reporting, dev-server-concurrency-contract]
+adds: [pre-commit-lint-gate, pre-flight-readiness-check, paired-value-smoke-checks, out-of-band-instruction-reporting, dev-server-concurrency-contract, verifier-pass-on-behavioral-changes]
 removes: []
 status: default
 ---
@@ -25,11 +25,12 @@ Pick this when:
   - `paired-value-smoke-checks` — workers grep both expected values
   - `out-of-band-instruction-reporting` — workers report direct user messages
   - `dev-server-concurrency-contract` — one owner per .next/ cache
+  - `verifier-pass-on-behavioral-changes` — separate Verifier dispatched on behavioral changes (standard tier OR worker_count >= 3)
 - Removes: (none)
 - Conflicts checked: (none — default mode has no conflict pairs to evaluate)
 
 ## Composition warnings
-None. All five default-on features are designed to coexist without informational `requires:` notes.
+None. All six default-on features are designed to coexist without informational `requires:` notes.
 
 ## Expected scorecard delta vs default mode
 This is the baseline. No deltas to report.

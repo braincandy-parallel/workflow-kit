@@ -27,6 +27,26 @@ Do all of these before responding to the user:
 
 1a. **Machine detection** — Run `system_profiler SPHardwareDataType` (macOS) or equivalent to identify the current hardware. Include the machine name in your orient summary so path assumptions are correct for the session. If the hardware doesn't match any known machine, report it and ask.
 
+1c. **Orphan team detection** — Scan `~/.claude/teams/` for team configs whose lead tmux session is dead. When a prior session ended with a team still live, the team's tmux server typically exited too, leaving the team dir on disk but the workers unreachable. `SendMessage` to such teams returns `success: true` but messages drop silently (the recipient pane is gone), and `TeamDelete` cannot remove them from outside the original session.
+
+   Run:
+   ```bash
+   if ! tmux list-sessions >/dev/null 2>&1; then
+     # No tmux server — all team dirs are orphans
+     ls ~/.claude/teams/ 2>/dev/null | head -20
+   else
+     for team in ~/.claude/teams/*/; do
+       [ -d "$team" ] || continue
+       lead=$(jq -r '.leadSessionId // empty' "$team/config.json" 2>/dev/null)
+       [ -z "$lead" ] && continue
+       tmux has-session -t "$lead" 2>/dev/null || \
+         echo "ORPHAN: $(basename "$team") (lead: $lead, mtime: $(stat -f %Sm -t %Y-%m-%d "$team"))"
+     done
+   fi
+   ```
+
+   For each orphan, report in your summary: team name, mtime, worker count (read from `config.json`). If 5+ orphans exist, recommend a batch cleanup. Per-orphan cleanup: archive any non-empty worker inbox first, then `rm -rf ~/.claude/teams/<name>/ ~/.claude/tasks/<name>/`. Always ask the user before running destructive cleanup. This prevents the failure mode where the agent assumes a team is reachable, sends messages, sees `success: true`, and waits forever for responses that will never come.
+
 1b. **Validate vault paths** — Read `~/.claude/wfk-paths.json`. For each entry in `paths`, check that `{vault_root}/{path}` exists as a directory (use `ls`). If any path is missing:
    - Report which paths are stale: "Path config drift: `{key}` points to `{path}` but directory doesn't exist."
    - Offer to fix: "Want me to update wfk-paths.json with the correct paths?"
