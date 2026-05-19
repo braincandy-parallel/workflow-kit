@@ -10,6 +10,32 @@ What changed, what it means for you, and what to watch for. The `/update-wfk pul
 
 ---
 
+## v3.6.0 - 2026-05-19
+
+### What this release is about
+
+This release restructures `/log-work` to prevent a recurring failure mode: daily note (DN) entries silently drifting into project log (PJL) territory. The session agent that just spent two hours touching code has working memory full of commit hashes, file paths, function names, counts, and phase numbers. When that same agent is asked to write a "scannable progress update" for the DN, the technical detail looks informative rather than banned, and the DN ends up reading like a second copy of the PJL. The fix is structural: the DN entry is now authored by a fresh subagent that reads only the PJL and the writing profile, never the conversation. The same insight is what justifies the Worker/Verifier/Coordinator pattern in `/qa-coord`: the agent who did the work cannot fairly summarize it for a different audience.
+
+### What got better
+
+**`/log-work` -- DN is now distilled by a fresh subagent, not the session agent.** Step 4b dispatches a single `general-purpose` subagent with a strict prompt template. The subagent receives only the PJL entry, any daily-note writing profile, the existing DN heading content, and the group/merge table. It produces ready-to-write markdown bullets organized by group and project, applying the banned-token list and density rules itself. Step 4c writes the returned bullets verbatim. Hand-editing the subagent output is explicitly banned because it reintroduces the contamination the architecture exists to prevent.
+
+**`/log-work` -- SELECT and CUT, not GROUP and STACK.** When a project's PJL has many distinct outcomes (heavy days, multi-surface sprints), the subagent prompt explicitly forbids the common failure of bundling 5+ outcomes into one bullet via commas and "ands." The directive is to pick the 2-3 most important outcomes and CUT the rest. Run-on bullets stacking multiple facts are a violation even when the individual facts are compliant.
+
+**`/log-work` -- Heavy-day sub-projects.** When a project genuinely has 5+ distinct outcome blocks worth tracking, the subagent splits into `#### Project (sub-area)` headings with 2-3 bullets each, rather than one giant heading with 8+ bullets. The sub-area label comes from the PJL's `###` subsection headings when present.
+
+**`/log-work` -- Banned-token list expanded and tightened.** The DN subagent prompt now explicitly bans lesson-number patterns (L\d+), skill names with leading slash, frontmatter field names, memory file names, library/framework names, UUIDs, error class names, HTTP header names, oracle scores, and review grades. Each of these was a real leak observed in DN drift cases.
+
+### What you need to do
+
+Nothing required. The first invocation of `/log-work` after pulling this version will dispatch the new subagent automatically. The skill no longer asks the session agent to self-compress, so if your DN entries have been drifting technical, this is the structural fix.
+
+### Migration
+
+`/update-wfk pull` updates `skills/log-work/SKILL.md`. No vault changes, no template changes, no manifest changes required.
+
+---
+
 ## v3.5.2 - 2026-05-18
 
 ### What this release is about

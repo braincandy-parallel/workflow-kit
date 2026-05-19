@@ -130,31 +130,114 @@ Only create a WL when the PJL entry would be too dense:
 - **All granular detail goes here** -- commit hashes, migration numbers, per-task breakdowns, component lists, bug lists
 - Linked from the PJL entry for that date
 
-### 4b. Daily Note (DN) -- Human Layer
+### 4b. Dispatch Fresh DN Distillation Subagent (MANDATORY before writing DN)
+
+The PJL is written. The session agent now holds full context: every commit hash, file path, count, and phase number touched during the work. That context is the contamination that causes DN drift. Asking the same agent to self-compress reliably fails because the technical detail looks "informative" rather than "banned." To prevent drift structurally, the DN entry is authored by a fresh subagent that reads ONLY the PJL and the writing profile, not the conversation.
+
+**Constitutional rationale:** This is the same gap class the Worker/Verifier/Coordinator pattern addresses (see `/qa-coord`). The agent who did the work cannot fairly summarize it for a different audience.
+
+1. **Gather materials.** Collect for the subagent:
+   - The full text of today's PJL entry (or entries, if multiple projects were logged this session). Include the date heading and all bullets you just wrote.
+   - The contents of any writing profile your vault uses for daily notes (e.g. a `WP - DN.md` reference doc). If none exists, skip this material.
+   - The contents of the matching `## Worked on` section in today's DN. If no `#### <Project>` heading exists yet, note "no existing entry for this project".
+   - The group + merge table from Step 3b so the subagent knows where bullets belong.
+
+2. **Dispatch one `Agent` call with `subagent_type: general-purpose`.** A single subagent handles all projects logged this session. Do not dispatch per-project. Do not use a team for a single dispatch.
+
+3. **Pass this prompt verbatim, with the materials interpolated:**
+
+   ```
+   You are distilling project log (PJL) entries into daily note (DN) bullets.
+
+   Audience: the user scanning their day + AI agents at orient time. The DN
+   is a scannable table of contents, NOT a technical log. The PJL holds detail.
+
+   Read ONLY the materials I provide below. Do not run searches, reads, or
+   tool calls of your own. You will not have access to conversation context,
+   and that is intentional.
+
+   --- PJL ENTRIES WRITTEN THIS SESSION ---
+   {paste full PJL entry text per project, with project name labels}
+
+   --- WRITING PROFILE ---
+   {paste any daily-note writing profile, or "no profile configured"}
+
+   --- EXISTING DN WORKED-ON SECTION ---
+   {paste current ## Worked on section, or "section empty"}
+
+   --- GROUP TABLE ---
+   {paste the group + project table from log-work Step 3b}
+
+   Return a single block of markdown bullets organized by group and project,
+   ready to drop into the DN. Format:
+
+   ### <Group>
+   #### <Project>
+   - **<bold one key outcome>** -- <single distinct fact>
+   - <second distinct outcome>
+   - <third distinct outcome if needed> -- [[PJL - <Project>|Project log]]
+
+   Rules:
+   - Most projects need 2-3 bullets. Hard cap at 4 unless splitting into
+     sub-project headings (see below).
+   - **SELECT and CUT, do not GROUP.** When a PJL has 5+ distinct outcomes,
+     pick the 2-3 most important and CUT the rest. Do not bundle multiple
+     outcomes into one bullet by chaining with commas and "ands." If you
+     find yourself writing "did X, restoring Y, adding Z, and fixing W,"
+     stop and pick the single most important outcome for that bullet.
+   - **One distinct outcome per bullet.** No "and" linking two ideas. No
+     comma-chained outcome lists. If a draft bullet contains two distinct
+     outcomes, split into two bullets OR cut the less important one.
+     Run-on bullets stacking multiple facts are a violation, even if all
+     the facts are individually compliant.
+   - **Heavy-day sub-projects.** When a project genuinely has 5+ distinct
+     outcome blocks worth tracking (e.g. a sprint touched the same project
+     in 3 different ways), split into sub-project `#### Project (sub-area)`
+     headings with 2-3 bullets each. The sub-area label comes from the
+     PJL's `###` subsection headings if present.
+   - Bold exactly one key outcome per project (or per sub-project heading).
+   - End the last bullet of each project with the PJL wikilink.
+   - If merging with existing DN bullets, return the FULL merged set; the
+     main agent will replace the heading's contents wholesale.
+   - For deployable code, preserve any environment label (LOCAL / deployed
+     to production URL with verification URL) from the PJL.
+   - **Use literal ampersand `&` in headings**, never the HTML entity
+     `&amp;`.
+
+   BANNED in DN output (these are PJL-only; do not include any of them):
+   - Commit hashes (hex strings)
+   - Migration filenames
+   - File paths (anything starting with ~/, /, ./, or containing /, except
+     production verification URLs)
+   - Function, class, method names (anything ending in () or CamelCase code)
+   - Container, schema, table, column, flag, env, header names
+   - Counts, percentages, ratios, totals (e.g. "8 threads", "5/5 PASS",
+     "176 tests", "349 -> 278 questions", "62/69 tasks")
+   - Phase numbers, task IDs, sub-incident refs, retro change letters
+   - Lesson numbers (L followed by digits), skill names with leading /,
+     frontmatter field names, memory file names
+   - Library, tool, framework names
+   - UUIDs, error class names, HTTP header names
+   - Test counts, oracle scores, review grades
+
+   If a PJL entry does not contain a clear human-readable outcome, return
+   one bullet stating that and link to the PJL. Do not invent outcomes.
+
+   Return ONLY the markdown bullet block. No preamble, no commentary,
+   no explanation of choices. The main agent will write your output
+   verbatim into the DN.
+   ```
+
+4. **Use the returned bullets verbatim in Step 4c.** Do not edit, re-derive, expand, or "improve" them from your own session context. If the subagent's output is clearly wrong (empty, formatting broken, banned tokens leaked), dispatch a second subagent with a corrective note rather than fixing it yourself. The contamination problem is structural, and a hand-edit reintroduces it.
+
+### 4c. Daily Note (DN) -- Human Layer
 
 1. Read today's daily note: `01_Notes/Daily/DN - YYYY-MM-DD.md`
-2. **Run the group + merge check (Step 3b)** -- find the group and any existing heading for this project
-3. If a matching `####` heading exists, append new bullets (consolidate if over 4 lines)
-4. If no match:
-   - Find or create the `### Group Name` heading
-   - Add a new `#### Project Name` heading under the group
-   - New groups go at the **top** of the Worked on section
-   - For standalone items (no group), create a `###` heading directly
-5. Add concise, human-friendly bullets:
-   - **Write like a progress update to yourself.** What feature was added? What bug was fixed? What shipped? What moved the project forward?
-   - Bold the key accomplishment
-   - **No technical internals in the DN.** These all belong in the PJL, never the daily note:
-     - Phase numbers, task IDs, pass/fail counts ("Phase 3a 6/7 PASS")
-     - Commit hashes, migration filenames, line numbers
-     - Function names, table/column names, container names
-     - Validation metrics, test results, row counts
-   - **Good:** "Fixed two pipeline bugs that were crashing email processing and meeting tracking"
-   - **Bad:** "Phase 3a entity resolution 6/7 PASS, 2,763 stuck runs cleaned up"
-   - **Good:** "Verified the signal pipeline works after the gateway refactor"
-   - **Bad:** "Pipeline health check after gateway refactor -- gateway integration verified working"
-   - Wikilink output artifacts (specs, plans, reports) only when they add context
-   - Link to the PJL file: `[[PJL - Project Name|Project log]]`
-6. **HARD RULE: 4 lines or fewer per project (heading + 3 bullets max).** The daily note is a table of contents for the day. Everything else is in the PJL (and WL for heavy days).
+2. **Run the group + merge check (Step 3b)** -- find the group and any existing heading for this project.
+3. **Write the bullets returned by the subagent in 4b verbatim.** The subagent already applied the writing profile, group/merge table, banned-token list, and PJL wikilinks. Do not re-derive from your own conversation context. Do not edit, expand, or "improve" the output. If the subagent's output is broken, dispatch a second subagent with a corrective note rather than hand-fixing.
+4. If merging with existing bullets under a matching `####` heading, replace the entire bullet list under that heading with the subagent's returned set wholesale (the subagent already produced the merged result).
+5. If the subagent created new `### Group` or `#### Project` headings that don't exist yet in the DN, add them. New groups go at the **top** of the Worked on section. Standalone items (no group) use `###` directly.
+6. **HARD RULE: 4 lines or fewer per project (heading + 3 bullets max).** Heavy-day projects split into sub-project headings (the subagent does this in 4b). The daily note is a table of contents; everything else is in the PJL (and WL for heavy days).
 
 **Good daily note (heavy day, multiple groups):**
 ```markdown
