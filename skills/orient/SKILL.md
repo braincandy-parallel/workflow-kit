@@ -48,8 +48,18 @@ Do all of these before responding to the user:
      done
    fi
 
-   # (b) LIVE LOCAL CLAUDE PROCESSES — catches non-tmux workers and concurrent sessions
-   ps -ef | grep -E 'claude.*--team-name|claude.*--dangerously-skip-permissions' | grep -v grep | head -20
+   # (b) LIVE LOCAL CLAUDE WORKERS — exclude interactive user-driven sessions
+   # --teammate-mode tmux = interactive Claude session driven by the user in a tmux pane (no worker risk)
+   # --team-name = team worker (the cross-session orphan pattern this check is designed to catch)
+   # bare --dangerously-skip-permissions without --teammate-mode = potential orphan worker
+   ps -ef | grep -E 'claude.*--team-name|claude.*--dangerously-skip-permissions' \
+     | grep -v grep \
+     | grep -v -- '--teammate-mode tmux' \
+     | head -20
+
+   # Informational only: count concurrent interactive sessions (do NOT flag, do NOT ask)
+   INTERACTIVE_COUNT=$(ps -ef | grep -- '--teammate-mode tmux' | grep -v grep | wc -l | tr -d ' ')
+   echo "INFO: ${INTERACTIVE_COUNT} concurrent interactive Claude session(s) detected (--teammate-mode tmux; no worker risk)"
 
    # (c) LIVE REMOTE CLAUDE PROCESSES (optional) — if you have known production SSH targets,
    #     run the same check against each via a multiplexed SSH call. Configure your targets in
@@ -66,7 +76,7 @@ Do all of these before responding to the user:
 
    - **(a) Stale team dirs.** Often harmless (a team dir on disk after its tmux session died). For each, report team name, mtime, worker count from `config.json`. If 5+ exist, recommend a batch cleanup. Per-orphan cleanup: archive any non-empty worker inbox, then `rm -rf ~/.claude/teams/<name>/ ~/.claude/tasks/<name>/`. Always ask before destructive cleanup. This prevents the failure mode where the agent assumes a team is reachable, sends `SendMessage`, sees `success: true`, and waits forever for responses that will never come.
 
-   - **(b) Live local Claude processes.** Could be active concurrent sessions OR cross-session orphans from prior closeouts. The agent cannot tell from `ps` alone — surface to the operator and ask whether to leave alone or treat as orphans. Do NOT auto-kill: killing other sessions' workers can destroy in-flight work. Show `--team-name`, `--parent-session-id`, start time, and tty for each match.
+   - **(b) Live local Claude workers.** Workers/orphans only — the `--teammate-mode tmux` filter excludes interactive user-driven sessions (the user sitting at concurrent tmux panes), which carry no orphan-worker risk because no agent is auto-dispatching shell/SSH from them. Any remaining match is a real `--team-name` worker OR a background `--dangerously-skip-permissions` process that should be investigated. Show `--team-name`, `--parent-session-id`, start time, and tty for each match. Do NOT auto-kill: killing other sessions' workers can destroy in-flight work. Surface the interactive-session count as INFO only — never ask the user to triage their own concurrent panes.
 
    - **(c) Live remote Claude processes.** **Highest risk.** Any match means an agent with shell / SSH / db-client capability is running against your production target. Surface immediately and recommend the operator confirm whether each is owned by an active session. Do NOT auto-kill.
 
@@ -153,8 +163,8 @@ After loading, give a short summary:
 - **Path / vault-health flags** — anything surfaced during validation
 - **Orphan sweep** — report the three categories from Step 1c distinctly:
   - **(a) Stale team dirs:** count + names + mtimes. Harmless unless >5.
-  - **(b) Live local Claude processes:** count + each match's `--team-name`, `--parent-session-id`, start time, tty. Surface to operator with the explicit question "active concurrent sessions or orphans?" before continuing. Never auto-kill.
+  - **(b) Live local Claude workers:** count + each match's `--team-name`, `--parent-session-id`, start time, tty. Excludes interactive `--teammate-mode tmux` sessions by filter. Plus a single INFO line: "N concurrent interactive sessions detected (no worker risk)." Surface (b) matches to operator with the explicit question "concurrent worker or orphan?" before continuing. Never auto-kill. The INFO line never triggers a question.
   - **(c) Live remote Claude processes:** count + each match. HIGHEST priority surface. Recommend the operator confirm ownership before proceeding.
-- Stop. Do not propose work; do not ask what to work on; do not present an `AskUserQuestion` about next steps. The only `AskUserQuestion` orient may issue is the live-process triage in 1c when category (b) or (c) returns matches. If the user wants to pick up work, they will run `/pickup`.
+- Stop. Do not propose work; do not ask what to work on; do not present an `AskUserQuestion` about next steps. The only `AskUserQuestion` orient may issue is the live-process triage in 1c when category (b) (non-interactive workers) or (c) returns matches. The interactive-session count is NEVER a question. If the user wants to pick up work, they will run `/pickup`.
 
 Keep the summary concise — the user doesn't need a recitation of everything you read, just confirmation you loaded context and any standout items.

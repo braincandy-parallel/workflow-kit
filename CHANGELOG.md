@@ -10,6 +10,22 @@ What changed, what it means for you, and what to watch for. The `/update-wfk pul
 
 ---
 
+## v3.7.4 - 2026-05-28
+
+### What this release is about
+
+Small polish on v3.7.2's three-check sweep. The local-process check was correctly catching cross-session orphan workers, but it was ALSO catching the operator's own concurrent interactive Claude sessions (a user driving multiple tmux panes), then prompting "active concurrent sessions or orphans?" every single orient. That prompt fired every time a user with more than one Claude session ran `/orient`, even though those sessions carry no orphan-worker risk by construction (no agent is auto-dispatching shell/SSH from an interactive teammate-mode pane).
+
+### What got better
+
+- **`/orient` Step 1c's local-process check now excludes `--teammate-mode tmux` sessions.** Those are user-driven interactive Claude sessions in tmux panes; they don't carry the cross-session orphan-worker risk the sweep is designed to catch. A separate `INFO` line reports the count of concurrent interactive sessions so they're visible but never escalate to a question. The sweep's actual matches (real `--team-name` workers, background `--dangerously-skip-permissions` processes not in teammate-mode) still surface for operator triage exactly as before. Net effect: users with multiple concurrent Claude sessions get a clean orient instead of an unnecessary triage prompt every time.
+
+### What you need to do
+
+Nothing. `update-wfk pull` replaces `SKILL.md` cleanly.
+
+---
+
 ## v3.7.3 - 2026-05-27
 
 ### What this release is about
