@@ -77,7 +77,7 @@ He is a friend of ours and we worked together on a festival Earth One march 2026
 - [ ] Fixed price or T&M engagement?
 - [ ]this would be a combination of using the total scope of the project + materials (+15% fee on all materials).. Parallel would be buying everything and handling the whole budget and purchasing. We would take the total material cost to figure out a total project fee
 - [ ] Is cofounder involved in this client relationship?
-	- [ yes he is involved with cleint relationship but he wont be involved in the technical. Just creative and business side of things (meetings) I want to delineate our roles in a good way so that he has a role and I have a role. I also want to evaluate whether its fair for me to make more money since my role is more essential to the deliverables and ultimately I will be liable for the whole technical execution of what we create.
+	- Yes — client relationship, creative direction, and business side. Not involved in technical execution.
 	- Agreed internal split: 65% Luca / 35% partner
 - [ ] Is there an RFP or do we need to generate a proposal?
 	- [ ] there is no RFP we need to generate the proposal
