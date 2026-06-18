@@ -184,6 +184,44 @@ The 15% gear fee is retained as company revenue and goes toward operating reserv
 
 ---
 
+---
+
+## 60/40 Scenario Analysis (USD)
+
+**Context:** Alonso reviewed this document (Jun 17, 2026) and accepted the current 65/35 split for this project. He proposed a post-project reevaluation to 60/40 if he feels that is more fair. Luca is open to some flexibility. This section models what 60/40 looks like for reference.
+
+The only change in this scenario is the salary split. Owners draw (50/50) and all other buckets remain unchanged.
+
+### Salary Distribution — 60/40 (USD only)
+
+| | Split | At $60K | At $70K | At $80K |
+|--|-------|---------|---------|---------|
+| Luca | 60% | $10,200 | $12,000 | $13,800 |
+| Alonso | 40% | $6,800 | $8,000 | $9,200 |
+| Buffer (held) | — | $4,000 | $4,500 | $5,000 |
+| **Total** | | **$21,000** | **$24,500** | **$28,000** |
+
+### Total Earnings — 60/40 (salary + owners draw, USD)
+
+| | At $60K | At $70K | At $80K |
+|--|---------|---------|---------|
+| **Luca** | **$13,575** | **$16,125** | **$18,675** |
+| **Alonso** | **$10,175** | **$12,125** | **$14,075** |
+
+### Side-by-Side Comparison (at $70K)
+
+| | 65/35 (current) | 60/40 (proposed) | Delta for Luca | Delta for Alonso |
+|--|----------------|-----------------|---------------|-----------------|
+| Luca salary | $13,000 | $12,000 | -$1,000 | — |
+| Alonso salary | $7,000 | $8,000 | — | +$1,000 |
+| Owners draw each | $4,125 | $4,125 | — | — |
+| **Luca total** | **$17,125** | **$16,125** | **-$1,000** | — |
+| **Alonso total** | **$11,125** | **$12,125** | — | **+$1,000** |
+
+A 60/40 split costs Luca $1,000 per project scenario and benefits Alonso by $1,000. The delta scales with project size.
+
+---
+
 ## Key Agreements
 
 - Salary split reflects role contribution (65% Luca / 35% Alonso).
