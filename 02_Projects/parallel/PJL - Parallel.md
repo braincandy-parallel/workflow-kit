@@ -10,6 +10,52 @@ Agent-readable implementation record. Newest entries on top.
 
 ---
 
+## 2026-06-18
+
+### Google Ads Campaign Launch
+
+**What was done:**
+- Google Ads account created under parallelprojectsmx@gmail.com (transferred from personal account via admin access)
+- Smart Campaign published (not Expert Mode Search) -- forced by GBP promo credit path. Credit is spend-match: spend 7000 MXN, get 7000 MXN back
+- Campaign name: Parallel - Laser Shows (Los Cabos)
+- 1 ad group: Laser Shows only. Projection Mapping excluded per Luca decision (wants to sell lasers and lighting design). [[SPC - Google Ads Setup]] updated to reflect 2 ad groups (Laser Shows, Lighting Design)
+- Keywords: 5 phrase-match -- "laser show Los Cabos", "laser show Cabo San Lucas", "laser show Cabo", "wedding laser show Los Cabos", "laser production Los Cabos"
+- Location targeting: US, Canada, Mexico (Smart Campaign limitation -- no "Presence or interest" option available)
+- Budget: 174 MXN/day (~$10 USD). Chosen to hit 7000 MXN threshold in ~40 days within qualifying window
+- Ad copy: 10 headlines, 4 descriptions, 2 long headlines. Angle: bespoke/premium/custom, no brand names, no indoor/outdoor mention per Luca preference
+- Asset group strength: Excellent at time of publish
+- Images uploaded: 4 square (1200x1200), 4 landscape (1200x628), 2 vertical (960x1200 4:5 ratio), 1 logo (black on transparent PNG 1200x1200)
+- Video: uploaded to YouTube via Google Ads automatic hosting
+- Extensions added: 5 sitelinks (Laser Shows, Lighting Design, Contact, Parallel Los Cabos, Custom LED, Projection Mapping), callouts (5), structured snippet (Services), call asset, lead form
+- Lead form: "qualified" mode, questions: event type (multiple choice), event date, venue, guest count (multiple choice). No budget question -- deliberate, want to pitch value before qualifying on price
+- Campaign published Jun 18, 2026. Pending Google review (est. 1-2 business days)
+
+**Image processing done this session (saved to C:\Users\lucas\Pictures\google ad\ and C:\Users\lucas\Downloads\):**
+- Logo: black-on-transparent 1200x1200 PNG, white-on-transparent 1200x1200 PNG (from C:\Users\lucas\Downloads\logo parallel.jpeg)
+- square full 1200x1200.jpg, square full 2 1200x1200.jpg, square full 3 1200x1200.jpg, square 4 1200x1200.jpg
+- landscape full 1-5 at 1200x628 (landscape full 5 at 1200x799 -- user crops in Google)
+- vertical full 960x1200.jpg, vertical full 2 960x1200.jpg (center-cropped from 2:3 to 4:5)
+
+**Decisions:**
+- Projection Mapping excluded from current campaign (Luca only wants to sell lasers and lighting design right now)
+- Smart Campaign accepted as Phase 1 vehicle -- full control will come in Phase 2 with Expert Mode
+- 174 MXN/day budget (not 108 or 347) -- balanced spend rate to hit credit threshold in time
+- Lead form set to "more qualified" not "more volume" -- premium bespoke service, quality over quantity
+- No price sitelink -- pricing is custom/quote-based
+- No location extension -- clients don't visit an office
+- GA4 already linked to Squarespace. Google Ads to GA4 link deferred until after campaign clears review
+
+**Still needed:**
+- Link Google Ads to GA4: Tools > Linked accounts > Google Analytics 4
+- Calendar reminders: 2-week review Jul 2, 2026; 4-week review Jul 16, 2026
+- Phase 2: Expert Mode Search campaign once 7000 MXN credit activates (~40 days). Use this campaign's performance data to inform Phase 2 copy, images, and keyword bids
+
+**Artifacts:**
+- [[SPC - Google Ads Setup]] -- updated (Projection Mapping removed, 2 ad groups)
+- [[PIC - Parallel Google Ads Launch]] -- closed Jun 18, 2026
+
+---
+
 ## 2026-06-17
 
 ### SEO Launch + Marketing Specs

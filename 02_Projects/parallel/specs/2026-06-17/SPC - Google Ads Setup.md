@@ -10,6 +10,7 @@ status: ready-to-implement
 **Project:** Parallel
 **Owner:** Luca
 **Budget:** $300/month (~$10/day)
+**Ad Groups:** 2 (Laser Shows, Lighting Design) — Projection Mapping excluded
 **Goal:** Generate planner inquiries via contact form while organic SEO builds
 **Platform:** Google Ads (Search only)
 
@@ -45,22 +46,11 @@ Target by **search intent, not user location.** Wedding planners searching for L
 
 ## 4. Ad Groups & Keywords
 
-Three ad groups, each linking to its own service page.
+Two ad groups, each linking to its own service page.
 
 Use **phrase match** for all keywords — wrap each in quotes in the interface.
 
-### Ad Group 1 — Projection Mapping
-**Landing page:** `/services/projection-mapping`
-
-```
-"projection mapping Los Cabos"
-"projection mapping Cabo"
-"projection mapping Cabo San Lucas"
-"event projection mapping Los Cabos"
-"wedding projection mapping Los Cabos"
-```
-
-### Ad Group 2 — Laser Shows
+### Ad Group 1 — Laser Shows
 **Landing page:** `/services/laser-shows`
 
 ```
@@ -71,7 +61,7 @@ Use **phrase match** for all keywords — wrap each in quotes in the interface.
 "laser production Los Cabos"
 ```
 
-### Ad Group 3 — Lighting Design
+### Ad Group 2 — Lighting Design
 **Landing page:** `/services/lighting-design`
 
 ```
@@ -100,25 +90,7 @@ app
 
 ## 5. Ad Copy
 
-### Ad Group 1 — Projection Mapping
-
-**Headlines** (max 30 characters each — give Google 5-6 to rotate):
-```
-Projection Mapping in Los Cabos
-Custom Projection Mapping
-Built for Your Event
-Bespoke Studio, Not a Rental Co.
-Acre, Palmilla, Chileno Bay
-Contact Parallel
-```
-
-**Descriptions** (max 90 characters each):
-```
-We design and produce custom projection mapping for events across Los Cabos. Tell us about yours.
-From concept to execution — content creation included. Every mapping built for the specific surface.
-```
-
-### Ad Group 2 — Laser Shows
+### Ad Group 1 — Laser Shows
 
 **Headlines:**
 ```
@@ -136,7 +108,7 @@ Professional-grade KVant and Unity laser systems. Programmed live or to timecode
 We design every show specifically for the event — not a template. Tell us about your project.
 ```
 
-### Ad Group 3 — Lighting Design
+### Ad Group 2 — Lighting Design
 
 **Headlines:**
 ```
@@ -202,7 +174,7 @@ Switch bidding to **Maximize Conversions** once you have 20+ conversions tracked
 - [ ] Create Google Ads account at ads.google.com
 - [ ] New Search campaign — goal: Leads
 - [ ] Location: US, Canada, Mexico — set to Presence or interest
-- [ ] Create 3 ad groups with phrase-match keywords
+- [ ] Create 2 ad groups with phrase-match keywords (Laser Shows, Lighting Design)
 - [ ] Write and enter ads, linking each to its service page
 - [ ] Add negative keywords at campaign level
 - [ ] Set up conversion tracking tag in Squarespace footer
