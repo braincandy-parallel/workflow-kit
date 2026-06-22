@@ -47,10 +47,12 @@ Start with event coverage. The archive is deep enough to run for months without 
 | Format | Frequency | Notes |
 |--------|-----------|-------|
 | Feed posts (photos) | 3x/week | Mon, Wed, Fri |
-| Reels | 1x/week | Tue or Thu — short event cuts, 15-30 sec |
-| Stories | 2-3x/week | BTS, quick clips, reshares from venues or planners |
 
-Do not post less than 3x/week total. Consistency matters more than volume.
+3 feed posts per week is the target. Reels and Stories are optional — add them when footage is available, not on a forced schedule.
+
+**Scheduling tool:** Meta Business Suite (free). Batch 2 weeks of posts at a time.
+
+**Cross-posting:** Post to both Instagram and Facebook from Meta Business Suite. No Facebook-specific content — Instagram drives strategy, Facebook mirrors automatically.
 
 ---
 
@@ -201,3 +203,42 @@ At the end of each month, check:
 - Whether the DM inbox has any unread inquiries
 
 Adjust the content mix based on what planners are saving and engaging with most.
+
+---
+
+## 12. Posting Calendar
+
+Starting week of Jun 23, 2026. 3 posts/week — Mon, Wed, Fri. Use this as the guide for scheduling in Meta Business Suite.
+
+| Date | Format | Event | Notes |
+|------|--------|-------|-------|
+| Mon Jun 23 | Photo | Viva el Ganzo | Photos |
+| Wed Jun 25 | Photo | Camino Saturno Boyanza | Photos |
+| Fri Jun 27 | Photo | Valentines Day - Casa Dracula | Photos |
+| Mon Jun 30 | Photo | Carlos Lopez | Photos |
+| Wed Jul 2 | Carousel | Puerto Raiz Festia | Get photos from event producer |
+| Mon Jul 7 | Reel | Earth One | Reel |
+| Wed Jul 9 | Reel | Circle Installation | Reel |
+| Fri Jul 11 | BTS | Reino LED | BTS + hero shot |
+| Mon Jul 14 | Photo | Tamara & Ivan | Projection mapping — frame around technical execution, not video content |
+| Wed Jul 16 | BTS | Viva el Ganzo | BTS |
+| Fri Jul 18 | BTS | Circle Installation | BTS |
+| Mon Jul 21 | Photo | Hotel San Cristobal DLV | BTS |
+| Wed Jul 23 | Photo | KOC Wirikuta | Event coverage — get photos from Paco |
+| Fri Jul 25 | Carousel | Viva el Ganzo | Carousel (horizontal reel + installation photos) |
+| Mon Jul 28 | Photo | Monte Cardon | Photos |
+| Wed Jul 30 | Reel | Valentines Day - Casa Dracula | Laser text mapping reel |
+| Sat Aug 1 | BTS | Earth One | BTS photos |
+
+### 2025 Archive (after Aug 1)
+
+Return to these once the 2026 backlog is cleared.
+
+- Camino Saturno Posada
+- Space XMAS
+- Mestizas
+- Rustico Acre
+- Santi y Loreto
+- Parallel Salon Nocion
+- Strong Boi
+- Veleros Eliot Fest

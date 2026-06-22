@@ -10,6 +10,91 @@ Agent-readable implementation record. Newest entries on top.
 
 ---
 
+## 2026-06-19
+
+### Instagram Organic Content - Spec + Calendar + Copy
+
+**Spec updated:** `02_Projects/parallel/specs/2026-06-17/SPC - Instagram Organic Content.md`
+- Cadence simplified to 3 feed posts/week (Mon/Wed/Fri) -- Reels and Stories demoted to optional
+- Meta Business Suite set as scheduling tool
+- Cross-posting to Facebook added as policy (Instagram drives, Facebook mirrors automatically)
+- Section 12 added: full posting calendar Jun 23 - Aug 1 (17 slots)
+
+**Posting calendar decisions:**
+- Start date: Mon Jun 23 with Viva el Ganzo photos
+- Earth One: Reel stays Jul 7; BTS moved to Aug 1 (post-reel "behind the scenes" framing)
+- Circle Installation split into Reel (Jul 9) and BTS (Jul 18) -- 9 days apart
+- Carlos Lopez BTS removed; Earth One BTS took the slot then moved to Aug 1
+- Casa Dracula second post added as Reel (Jul 30) -- laser text mapping angle
+- Calendar runs through Jul 30 in July 2026 folder; Aug 1 Earth One BTS in August 2026 folder
+
+**Instagram Post Management folder created:**
+- Root: `C:\Users\lucas\Dropbox\++Luca++\++Error x Braincandy DRIVE\Instagram Post Management\`
+- Structure: June 2026/, July 2026/, August 2026/ -- each post in dated subfolder with copy.txt
+- 17 copy files written; copy sourced from user descriptions of each event
+- All hashtags removed from copy per user preference (Alonso adds at scheduling time)
+- Encoding issues resolved by rewriting affected files via Write tool after PowerShell Set-Content corrupted UTF-8
+
+**Key copy decisions per event:**
+- Viva el Ganzo (Jun 23): leads with red button interactive installation hook; tags @vivaelgonzo and @meta
+- Camino Saturno (Jun 25): "fifteen events together" trust signal; tags @craniareclaim
+- Casa Dracula (Jun 27): laser text mapping for interactive theatre; "two years running" relationship signal
+- Carlos Lopez (Jun 30): lighthouse projection mapping in collab with @rubik
+- Earth One (Jul 7): "four days, every corner" -- main stage + jetty + facade pixel mapping
+- Circle Installation (Jul 9 Reel, Jul 18 BTS): CTA framing -- available for rent in Los Cabos
+- Reino LED (Jul 11): service expansion post -- permanent LED installs, not just events
+- Hotel San Cristobal (Jul 21): dancefloor package with @thebond and @studiocadenza
+- Puerto Raiz Festia (Jul 25): birthday laser package with @festiaproductions
+- Monte Cardon (Jul 28): 1.5m disco ball + lasers afterparty with @thebond and @studiocadenza
+- KOC Wirikuta (Jul 23): Kings of Convenience laser show with @trilogyproduction
+- Tamara & Ivan (Jul 14): projection mapping -- pending decision, frame around execution not video content
+
+**Photo conversion pipeline:**
+- Python 3.12 installed via winget
+- rawpy + Pillow installed via pip
+- ImageMagick failed on ARW (no LibRaw delegate) -- Python rawpy is the working path
+- Converted: _DSC1516.ARW, _DSC1517.ARW, _DSC1519.ARW -> JPG (quality 90, camera WB) in Casa Dracula folder
+- Pipeline reusable: point at any folder with ARW files and convert in-chat
+
+**Still needed before Jun 23:**
+- Alonso: set up Meta Business Suite, schedule Jun 23 post
+- Confirm venue/collaborator Instagram handles (Casa Dracula, The Bond, Studio Cadenza, Rubik, Festia, Trilogy)
+- Pending photos: KOC Wirikuta (from Paco), Puerto Raiz Festia (from event producer)
+- Tamara & Ivan: Luca/Alonso decision before Jul 14 slot
+
+---
+
+### Google Ads - Conversion Setup & Campaign Configuration
+
+**Conversion action configured:**
+- Action name: "Lead Form Submission"
+- Tracking method: GA4 tag (already on Squarespace site -- Google Ads detected it automatically, no code installation needed)
+- Trigger: URL-based (thank-you page redirect after form submission -- Squarespace form already configured to redirect)
+- Value: 40,000 MXN fixed (midpoint of 20K-60K MXN laser show range; rough estimate for Smart Bidding signal)
+- Count: One (one conversion per click)
+- Click-through window: 30 days (default; appropriate for high-consideration service)
+- Attribution model: Last click
+- Status: Unverified (normal -- no conversions have fired yet; will clear after first real form submission)
+- URL condition was initially wrong; corrected in Edit settings within Tools > Measurement > Conversions
+
+**Geographic targeting updated:**
+- Removed: Canada (3 insights all from Mexico; user wants budget focused on US + Mexico only)
+- Now targeting: United States, Mexico only
+- Rationale: Smart Campaign had US/Canada/Mexico by default; Canada excluded to prevent budget dilution
+
+**Campaign status confirmed:**
+- Status: Eligible / Learning
+- "Learning" is normal for new Smart Bidding campaign (1-2 week data-gathering phase)
+- Ad not showing in Ad Preview & Diagnosis during learning phase is expected behavior -- not a config error
+- 3 insights recorded, all from Mexico
+
+**Still needed:**
+- Formally link Google Ads to GA4: Tools & Settings > Linked accounts > Google Analytics 4 (separate from tag detection)
+- Verify conversion fires: submit test form on parallel-projects.net and confirm thank-you page URL matches conversion rule
+- Calendar reminders: 2-week review Jul 2, 4-week review Jul 16 (still pending from Jun 18)
+
+---
+
 ## 2026-06-18
 
 ### Google Ads Campaign Launch
