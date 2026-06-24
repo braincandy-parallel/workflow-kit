@@ -92,31 +92,13 @@ Network assignments (Sequencer is AP — no router):
 
 ---
 
-## Lucille Onsite Dry Run (gates Phase 3)
+## Phase 3: BRAIN Assembly + Bench Test
 
-Bring working bench firmware to Lucille's workspace. Test the full touch-to-sequence on or near the physical structure. This session locks all layout decisions that Phase 3 depends on. Do not start T14 until this session is complete.
+**User-testable outcome:** All electronics assembled and wired inside BRAIN enclosure. Full sequence (touch → LED + audio) runs correctly from the bench before the unit goes into the bison.
 
-**Outputs required from this session before Phase 3 starts:**
-- Touch sensor placement confirmed on snout and horns (sensor type validated against fiberglass)
-- LED channel belly positions confirmed (how many segments, spacing along ribs)
-- Horn wire routing path confirmed accessible
-- Cable pass-through locations through body panels confirmed
-- Head assembly sequence confirmed (open vs closed during sensor wire routing)
-- Any structural constraints or surprises documented
+**Gate to Phase 3b:** Full sequence triggers correctly from BRAIN on the bench. No phase 3b until this passes.
 
-| # | Task | Status | Acceptance Criteria | Deps | Files | Notes |
-|---|------|--------|---------------------|------|-------|-------|
-| 13b | Lucille onsite dry run — layout confirmation | todo | All 5 outputs above are documented. LED belly positions locked. Touch sensor placement on snout + horns confirmed viable. Head assembly sequence confirmed. Any structural surprises captured before BRAIN build starts. | 13 | `docs/layout-decisions.md` | This session influences trigger design, LED segment count, and installation guide assembly sequence. Bring: bench firmware running on 3 ESP32s, 1m test LED strip in channel with diffuser, test touch sensor, laptop. |
-
----
-
-## Phase 3: BRAIN Assembly + Physical Integration
-
-**User-testable outcome:** All electronics mounted in BRAIN enclosure inside Bison head; touch sensors on snout and horns; LED strips in aluminum channels; all cables labeled; fan vent passes 250ml water pour test.
-
-**Prerequisite:** T13b (Lucille onsite dry run) must be complete. All layout decisions are locked coming out of that session. Horn wire routing path must be confirmed accessible before Lucille seals the fiberglass horns — this cannot be retrofitted after sealing.
-
-**Gate to Phase 4:** Full sequence triggers correctly from snout and horns with BRAIN assembled and mounted.
+**Note:** No Lucille prerequisite. BRAIN is built and bench-tested independently. Physical installation into the bison (Phase 3b) happens at Lucille's workspace after BRAIN bench test passes.
 
 | # | Task | Status | Acceptance Criteria | Deps | Files | Notes |
 |---|------|--------|---------------------|------|-------|-------|
@@ -129,9 +111,21 @@ Bring working bench firmware to Lucille's workspace. Test the full touch-to-sequ
 
 ---
 
+## Fiberglass Capacitive Test (week of June 30 — before BRAIN build)
+
+Bring `bench-sequencer-touch-test.ino` + sequencer ESP32 to Lucille's workspace. Test touchRead through the actual fiberglass material that will be used for the sculpture. Record baseline and touched readings. This establishes the real threshold to bake into production firmware before BRAIN is assembled.
+
+**Output required:** Confirmed touch threshold value through fiberglass. If signal is blocked entirely, decide: surface-mount pad or drill-through (with Lucille's input) before T14.
+
+| # | Task | Status | Acceptance Criteria | Deps | Files | Notes |
+|---|------|--------|---------------------|------|-------|-------|
+| 13b | Fiberglass capacitive test at Lucille's | todo | touchRead through actual fiberglass sample shows reliable TOUCHED vs idle delta. Threshold value recorded and added to `sequencer/sequencer.ino` TOUCH_THRESHOLD constant. | 8 | `sequencer/sequencer.ino` | Bring: sequencer ESP32 flashed with bench-sequencer-touch-test.ino, laptop, wire + copper surrogate. Test at real electrode wire length. If fiberglass fully blocks signal, document result and decide with Lucille on surface-mount pad or drill-through before BRAIN build starts. |
+
+---
+
 ## Phase 4: Acceptance Testing
 
-**User-testable outcome:** All SAT-1 through SAT-8 criteria pass. System is verified ready for pre-ship dry-run video.
+**User-testable outcome:** All SAT-1 through SAT-8 criteria pass on the fully assembled BRAIN bench unit.
 
 **Gate to Phase 5:** All SATs pass. Thermal readings at SAT-7 hour 4 show stable plateau.
 
@@ -183,12 +177,14 @@ Bring working bench firmware to Lucille's workspace. Test the full touch-to-sequ
 
 | Milestone | Target Date | Gate |
 |-----------|-------------|------|
-| Phase 1 + 2 complete (firmware working on bench) | July 1 | Touch-to-sequence working end-to-end |
-| Phase 3 complete (BRAIN assembled, sensors mounted) | July 8 | Full sequence triggers from snout + horns |
-| Phase 4 complete (all SATs pass) | July 12 | All SAT-1 through SAT-8 pass |
-| JB audio hard deadline | July 10 | Escalated July 5 if not received |
-| SAT-9 crew dry-run | July 18 | Guide-only assembly passes |
-| Pre-ship video + pack | July 20 | All SATs on video |
+| Phase 1+2 firmware complete | June 23 week | 1 day; touch architecture locked |
+| Fiberglass capacitive test (at Lucille's) | June 30 week | Establishes real TOUCH_THRESHOLD before BRAIN build |
+| BRAIN box arrives | ~July 4 | Last component; all others on hand |
+| Phase 3 BRAIN assembly + bench test | ~July 5–7 | 1 day build; full sequence passes on bench |
+| Phase 4 SATs | ~July 8–12 | SAT-7 thermal test needs full dedicated day |
+| JB audio hard deadline | July 10 | Escalate July 5 if not received |
+| Docs + SAT-9 crew dry-run (SF) | July 15–18 | META crew guide-only assembly in SF warehouse |
+| Ready / packed | July 15 | Luca's hard deadline |
 | Ship | July 21 | Hard deadline |
 
 ---
@@ -197,3 +193,5 @@ Bring working bench firmware to Lucille's workspace. Test the full touch-to-sequ
 
 | Date | Task # | Agent | What was done | Notes |
 |------|--------|-------|---------------|-------|
+| 2026-06-23 | T1 | Luca | TTP223 bench tested — problematic. Cable extensions trigger sensor; no solderable pads for extension. Pivoting to ESP32 native touch + TTP223B comparison. | D-8 pending update after touch architecture locked |
+| 2026-06-23 | Audio | Luca | Audio bench test complete. ESP32-audioI2S v2.0.0, PCM5102MK DAC, SD card. EOF scratch fixed (DMA zero + silence loop). UART trigger working. WLED UDP trigger working (192.168.1.178, preset 2). | See PJL for full library fix history |

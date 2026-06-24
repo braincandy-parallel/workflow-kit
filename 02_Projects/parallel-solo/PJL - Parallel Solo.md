@@ -7,6 +7,99 @@ project: "Parallel Solo"
 
 # PJL - Parallel Solo
 
+## 2026-06-23
+
+### Bison Installation — Planning, Touch Architecture, Firmware (OTA + Web Config)
+
+**Touch sensor architecture:**
+- TTP223 (original D-8) tested -- problematic. No solderable pads for cable extension; any nearby cable or metal triggers sensor. Not viable for large metal sculpture with long electrode runs.
+- Two candidates to test before locking: (1) ESP32 native capacitive touch on GPIO 4 (T0) -- wire runs to electrode by design, threshold software-tunable; (2) TTP223B -- test if configurable sensitivity fixes false-trigger issue.
+- Created `bison-firmware/bench-test/bench-sequencer/bench-sequencer-touch-test.ino` -- prints raw `touchRead(4)` value continuously, flags TOUCHED vs idle at configurable `TOUCH_THRESHOLD` constant.
+- D-8 in plan marked pending update until architecture is locked.
+
+**Project understanding corrections:**
+- Lucille makes physical bison structure; Luca delivers tested BRAIN unit + installation guide.
+- META crew (JB + Ruts) does physical installation in SF warehouse per SAT-9.
+- Removed incorrect Phase 3b "Installation into bison at Lucille's" from plan -- that work is done by META crew, not Luca.
+- Fiberglass capacitive test added as standalone section (week of June 30): bring `bench-sequencer-touch-test.ino` + sequencer ESP32 to Lucille's, test touchRead through actual fiberglass, record threshold. If signal blocked: surface-mount pad or drill-through decision with Lucille before BRAIN build.
+- Lucille dry run is not a prerequisite for BRAIN assembly. Correct sequence: firmware done (this week) → fiberglass test at Lucille's (week of June 30) → BRAIN box arrives (~July 4) → BRAIN assembly + bench test (1 day) → ship to SF → META crew installs → SATs.
+
+**Schedule locked:**
+- This week: Phase 1+2 firmware (touch test, lock architecture, production sequencer AP mode, WLED preset, integration test) -- 1 full day
+- Week of June 30: fiberglass capacitive test at Lucille's
+- ~July 4: BRAIN box arrives (last component; all others on hand)
+- ~July 5–7: BRAIN assembly + bench test (1 day)
+- ~July 8–12: SAT-1 through SAT-8 (SAT-7 needs full dedicated day)
+- July 10: JB audio hard deadline; escalate July 5 if not received
+- July 15: Luca's hard ready/packed date
+- July 21: ships
+
+**Plan restructured** (`02_Projects/parallel-solo/plans/2026-06-15/PL - Outside Lands Bison Installation.md`):
+- Removed incorrect "Lucille Onsite Dry Run (gates Phase 3)" section
+- Phase 3 renamed to "BRAIN Assembly + Bench Test" -- no Lucille prerequisite
+- Added "Fiberglass Capacitive Test" section between Phase 2 and Phase 3 (T13b, week of June 30)
+- Phase 4 (acceptance testing) updated: SATs run on assembled BRAIN bench unit
+- Timeline anchor updated with above schedule
+- Work log entries added for June 23 TTP223 test and audio bench test
+
+**PIC updated** (`01_Notes/Pickups/PIC - Bison Bench Test.md`):
+- Status section updated to reflect audio bench test complete, TTP223 problematic, native touch next
+- Task list rewritten with three blocks: this week / ~July 4 / ~July 8–12
+- Critical notes updated: added AP mode note, fiberglass risk, correct sequence
+
+**OTA + web config added to firmware:**
+- `bison-firmware/sequencer/sequencer.ino`: added `ArduinoOTA`, `WebServer`, `Preferences`. Config page at http://192.168.4.1 (connect to bison-ap). Exposes `audioDurationMs` (NVS key: `audioDur`, default 30000ms). OTA hostname: `bison-sequencer`, password: `bison2026`. Partition required: Minimal SPIFFS (1.9MB APP with OTA).
+- `bison-firmware/bench-test/bench-sequencer/bench-sequencer.ino`: same additions. Config page at device IP (STA mode, printed to serial). Exposes `audioDurationMs` (NVS: `audioDur`) and `wledOffDelayMs` (NVS: `wledOff`), both default 22000ms. OTA hostname: `bison-bench-seq`, password: `bison2026`. Same partition scheme required.
+- Both save to NVS via Preferences library; values survive power cycle. First boot uses hardcoded defaults; saved values take over on subsequent boots.
+- WLED preset constants and WiFi credentials remain hardcoded (require reflash to change).
+
+**Key open items:**
+- Touch architecture: lock after testing native touch + TTP223B
+- Production sequencer firmware (AP mode, T2–T5): not yet written
+- WLED preset (T11): not yet designed
+- JB escalation calendar reminder: set for July 5
+
+### Bison Installation — Bench Audio Firmware
+
+**Goal:** Get bench-test audio ESP32 playing a WAV file via PCM5102MK DAC, triggered by UART 'T' byte from sequencer ESP32. No scratch noise at EOF.
+
+**Hardware confirmed working:**
+- ESP32-WROOM-32E (Freenove 38-pin, no PSRAM), Arduino core 3.3.10
+- PCM5102MK DAC module (BCK=GPIO26, LRC=GPIO25, DIN=GPIO22, VCC=3.3V)
+- SD card module (SCK=GPIO18, MISO=GPIO19, MOSI=GPIO23, CS=GPIO5, VCC=5V — must be 5V)
+- UART trigger: GPIO16 RX from sequencer ESP32 GPIO17 TX
+- SD card: FAT32, 16GB SanDisk Extreme
+
+**Library path taken:**
+- Started on ESP32-audioI2S v3.4.6 — requires PSRAM; ESP32-WROOM-32E has none
+- Patched PSRAM check, reduced buffer sizes (m_outbuffSize, AudioBuffer, m_samplesBuff48K) — hit cascading OOM (delay_r, m_httpRespHdrBuff); abandoned
+- Downgraded to v2.0.0 — designed for no-PSRAM ESP32
+
+**v2.0.0 compiler fixes (C:\Users\lucas\Documents\Arduino\libraries\ESP32-audioI2S-master\src\aac_decoder\):**
+- `aac_decoder.cpp`: Changed `int val` → `int32_t val` in UnpackQuads, UnpackPairsNoEsc, UnpackPairsEsc, DecodeOneScaleFactor, DecodeOneSymbol (5 sites)
+- `aac_decoder.cpp`: Changed `unsigned int Get32BitVal(unsigned int*)` → `uint32_t Get32BitVal(uint32_t*)` (definition)
+- `aac_decoder.h` line 501: Changed declaration to match `uint32_t Get32BitVal(uint32_t*)`
+- `aac_decoder.cpp` line 4491: Changed `DecodeHuffmanScalar` definition 3rd param `uint32_t bitBuf` → `unsigned int bitBuf` to match header (Xtensa: unsigned int ≠ uint32_t at ABI level — linker mismatch)
+- `Audio.cpp` `stopSong()`: Removed `i2s_zero_dma_buffer()` call — it was clearing queued silence prematurely
+
+**Audio.ino API fix:** v3.4.6 used `Audio::audio_info_callback` lambda; v2.0.0 uses global `void audio_info(const char*)` function — updated sketch.
+
+**EOF scratch noise root cause + fix:**
+- Root cause: After audio EOF, DMA descriptor ring had stale/garbage data in the underrun window; PCM5102 auto-mute briefly released and played it as static
+- Fix A: `i2s_zero_dma_buffer(I2S_NUM_0)` called inside `audio_eof_mp3` callback — zeroes all DMA descriptors immediately after stopSong(), before underrun window opens
+- Fix B: Looping silence file (`/silence.wav`, 48kHz stereo 16-bit, 5s) plays on startup and after each EOF via `audio.setFileLoop(true)` — keeps I2S BCLK/LRCK alive so PCM5102 never loses clock reference
+- Both required: DMA zeros cover the underrun window; silence file prevents clock stall between plays
+
+**SD card contents (final):**
+- `/benchtest.wav` — 48kHz stereo 16-bit, ~30s
+- `/silence.wav` — 48kHz stereo 16-bit, 5s (generated in Audacity: Generate → Silence)
+
+**Sketch:** `02_Projects/parallel-solo/bison-firmware/bench-test/bench-audio/bench-audio.ino`
+
+**Outcome:** Bench test complete. Audio plays cleanly on trigger; zero scratch at EOF. Bench-sequencer triggers audio via UART and WLED via UDP.
+
+**Next:** Solder ESP32s onto breakout boards → workshop test with real SK6812 LEDs via WLED.
+
 ## 2026-06-15
 
 ### Outside Lands Bison Installation — Spec + Review
